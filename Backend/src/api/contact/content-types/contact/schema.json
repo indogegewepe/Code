@@ -1,0 +1,30 @@
+{
+  "kind": "singleType",
+  "collectionName": "contacts",
+  "info": {
+    "singularName": "contact",
+    "pluralName": "contacts",
+    "displayName": "Contact"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Email": {
+      "type": "string"
+    },
+    "Phone": {
+      "type": "biginteger"
+    },
+    "Location": {
+      "type": "text"
+    },
+    "WorkingStart": {
+      "type": "time"
+    },
+    "WorkingEnd": {
+      "type": "time"
+    }
+  }
+}

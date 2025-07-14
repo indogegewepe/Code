@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "text_whats_apps",
+  "info": {
+    "singularName": "text-whats-app",
+    "pluralName": "text-whats-apps",
+    "displayName": "TextWhatsApp"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "CTA": {
+      "type": "string"
+    }
+  }
+}

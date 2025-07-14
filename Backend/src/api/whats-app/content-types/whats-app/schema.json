@@ -1,0 +1,23 @@
+{
+  "kind": "singleType",
+  "collectionName": "whats_apps",
+  "info": {
+    "singularName": "whats-app",
+    "pluralName": "whats-apps",
+    "displayName": "WhatsApp"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "PhoneNumber": {
+      "type": "string"
+    },
+    "text_whats_apps": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::text-whats-app.text-whats-app"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+.title {
+  font-family: Outfit, var(--mantine-font-family);
+  color: var(--mantine-color-white);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.description {
+  color: var(--mantine-color-blue-0);
+}

@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+body {
+  overflow-x: hidden;
+  background-color: light-dark(#fff, #121212);
+}
+
+.heroContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    @media screen and (max-width: 900px) {
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+}
+
+.heroContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    @media screen and (min-width: 900px) {
+        width: 50%;
+    }
+}
+
+.heroContainer h1 {
+    font-size: 2.5rem;
+    font-weight: 450;
+    color: light-dark(#007BFF, #007BFF);
+}
+
+.heroContent p {
+    color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.heroButtons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    @media screen and (max-width: 900px) {
+        flex-direction: column;
+    }
+}
+
+.heroButtons a{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 0px 30px;
+}
+
+.heroGlobe {
+    position: absolute;
+    height: 150%;
+    width: 100%;
+    z-index: -1;
+    top: 0;
+    transform: translateX(448px) translateY(-59px);
+    @media screen and (max-width: 900px) {
+        transform: translate(0px, 331px);
+}
+}
+
+@media (max-width: 900px) {
+    .heroSection {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+    .heroImage {
+        justify-content: center;
+        margin-top: 2rem;
+        width: 100%;
+        z-index: 2;
+    }
+    .heroButtons {
+        justify-content: center;
+    }
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+
+.heroContainerSec{
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    place-items: center;
+    overflow: hidden;
+    height: 100%;
+    @media screen and (max-width: 900px) {
+        align-items: flex-start;
+    }
+}
+
+.heroContentSec {
+    display: flex;
+    flex-direction: column;
+}
+
+.heroContentSec h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #fff;
+    padding-bottom: 2.5rem;
+}
+
+.heroContentThird h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    padding: 1.5rem 0;
+    color: light-dark(#000000, #ffffff);
+}
+
+.heroPartners {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    place-items: center;
+    overflow: hidden;
+    height: 100vh;
+    background-color: #171717;
+    @media screen and (max-width: 900px) {
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+}
+
+.ContentPartners {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.heroContentPartners h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    padding: 1.5rem 0;
+    color: #fff;
+}
+
+.heroContainerFourth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    place-items: center;
+    overflow: hidden;
+    @media screen and (max-width: 900px) {
+        align-items: flex-start;
+    }
+}
+
+.faqContent {
+    padding-top: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.faqContent h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    padding: 1.5rem 0;
+    color: light-dark(#000000, #ffffff);
+}
+
+.heroContact{
+    background-color: light-dark(#007BFF, #070a4f);
+    border-radius: var(--mantine-radius-md);
+}
+
+.contactContent {
+    align-items: center;       
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    padding: 3rem 0;
+    @media screen and (max-width: 900px) {
+        padding: 3rem;
+    }
+}
+
+.Whatsapp{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.grid-bg{
+    background-color: light-dark(#007BFF, #070a4f);
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.loaderContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+.loader{
+      font-size: 48px;
+      color: light-dark(#171717, #FFFFFF);
+      display: inline-block;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 400;
+      position: relative;
+    }
+    .loader:after{
+      content: 'CV Andita';
+      position: relative;
+      z-index: 5;
+    }
+    .loader:before{
+      content: '';
+      height: 6px;
+      border: 1px solid;
+      border-radius: 10px;
+      width: 100%;
+      position: absolute;
+      bottom: 0px;
+      background: linear-gradient(#007BFF 100%, transparent 0) no-repeat;
+      background-size: 0% auto;
+      animation: 10s lineGrow linear infinite;
+    }
+
+    @keyframes lineGrow {to {  background-size: 100% auto}}
