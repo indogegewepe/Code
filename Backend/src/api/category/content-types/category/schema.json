@@ -18,11 +18,11 @@
     "slug": {
       "type": "uid"
     },
-    "articles": {
+    "article": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToOne",
       "target": "api::article.article",
-      "mappedBy": "category"
+      "inversedBy": "categories"
     },
     "description": {
       "type": "text"
