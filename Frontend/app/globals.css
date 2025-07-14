@@ -188,7 +188,7 @@ body {
 }
 
 .heroContact{
-    background-color: light-dark(#007BFF, #070a4f);
+    background-color: light-dark(#4c4c4c, #171717);
     border-radius: var(--mantine-radius-md);
 }
 
@@ -208,10 +208,11 @@ body {
     bottom: 30px;
     right: 30px;
     backdrop-filter: blur(10px);
+    z-index: 1000;
 }
 
 .grid-bg{
-    background-color: light-dark(#007BFF, #070a4f);
+    background-color: light-dark(#4c4c4c, #171717);
     &:hover {
         transform: scale(1.05);
     }
@@ -265,7 +266,7 @@ body {
     width: 10em;
     height: 100%;
     pointer-events: none;
-    z-index: 50;
+    z-index: 1;
     }
 
     .fade-in-container::before {

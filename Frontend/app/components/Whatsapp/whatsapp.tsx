@@ -39,8 +39,8 @@ export default function WhatsappButton() {
         const data = await fetchFromStrapi("/api/whats-app");
 
         // Ambil nomor dari response
-        const phone = data.data?.PhoneNumber?.replace('+', ''); // wa.me tidak pakai "+"
-        if (phone) setWasapNum(+6289526975000);
+        const phone = data.data?.PhoneNumber?.replace('+', '');
+        if (phone) setWasapNum("6289526975000");
       } catch (error) {
         console.error("Failed to fetch WhatsApp Phone Number:", error);
       }
@@ -60,7 +60,7 @@ export default function WhatsappButton() {
       size="xl"
       className="Whatsapp"
       rightSection={<IconBrandWhatsappFilled />}
-      disabled={!wasapNum} // tombol nonaktif saat nomor belum siap
+      disabled={!wasapNum}
     >
       <WhatsappText />
     </Button>
