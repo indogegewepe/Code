@@ -1,16 +1,33 @@
 'use client';
 
-import { Accordion, Container, Grid, Image, Title } from '@mantine/core';
+import { Accordion, Container, Grid, Image, Title, Text } from '@mantine/core';
 import classes from './faq.module.css';
+import { fetchFromStrapi } from '@/lib/api';
+import { useEffect, useState } from 'react';
 
-const placeholder =
-  'Ya, kami menawarkan layanan instalasi di berbagai lokasi. Silakan hubungi kami untuk informasi lebih lanjut.';
-const placeholder2 =
-  'Biasanya, proses instalasi dapat memakan waktu mulai dari beberapa jam hingga beberapa hari, tergantung pada tingkat kerumitan dan kebutuhan spesifik lokasi Anda.';
-const placeholder3 =
-  'Ya, kami menyediakan layanan maintenance untuk instalasi kami. Tim kami siap membantu jika ada masalah yang muncul setelah instalasi.';
+interface FaqItem {
+  id: number;
+  documentId: string;
+  Question: string;
+  Answer: string;
+}
 
 export default function Faq() {
+  const [faqItems, setFaqItems] = useState<FaqItem[]>([]);
+
+  useEffect(() => {
+    const fetchFaq = async () => {
+      try {
+        const res = await fetchFromStrapi('/api/faqs');
+        setFaqItems(res.data); // ambil array dari response
+      } catch (error) {
+        console.error('Failed to fetch FAQ:', error);
+      }
+    };
+
+    fetchFaq();
+  }, []);
+
   return (
     <Container size="lg" className="heroContainerFourth">
       <div className="faqContent">
@@ -28,28 +45,25 @@ export default function Faq() {
                 />
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 6 }}>
-                <Accordion
-                  chevronPosition="right"
-                  defaultValue="reset-password"
-                  variant="separated"
-                >
-                  <Accordion.Item className={classes.item} value="reset-password">
-                    <Accordion.Control>
-                      Apakah jasa instalasi bisa dilakukan di luar kota?
-                    </Accordion.Control>
-                    <Accordion.Panel>{placeholder}</Accordion.Panel>
-                  </Accordion.Item>
-                  <Accordion.Item className={classes.item} value="another-account">
-                    <Accordion.Control>
-                      Berapa lama proses instalasi jaringan fiber optic?
-                    </Accordion.Control>
-                    <Accordion.Panel>{placeholder2}</Accordion.Panel>
-                  </Accordion.Item>
-                  <Accordion.Item className={classes.item} value="newsletter">
-                    <Accordion.Control>Apakah menyediakan layanan maintenance?</Accordion.Control>
-                    <Accordion.Panel>{placeholder3}</Accordion.Panel>
-                  </Accordion.Item>
-                </Accordion>
+                {faqItems.length > 0 && (
+                  <Accordion
+                    key={faqItems[0].documentId}
+                    chevronPosition="right"
+                    variant="separated"
+                    defaultValue={faqItems[0].documentId}
+                  >
+                    {faqItems.map((item) => (
+                      <Accordion.Item
+                        className={classes.item}
+                        key={item.documentId}
+                        value={item.documentId}
+                      >
+                        <Accordion.Control>{item.Question}</Accordion.Control>
+                        <Accordion.Panel>{item.Answer}</Accordion.Panel>
+                      </Accordion.Item>
+                    ))}
+                  </Accordion>
+                )}
               </Grid.Col>
             </Grid>
           </Container>
