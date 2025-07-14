@@ -251,3 +251,43 @@ body {
     }
 
     @keyframes lineGrow {to {  background-size: 100% auto}}
+
+    .fade-in-container {
+    position: relative; /* Add this */
+    /* Any other existing styles for fade-in-container */
+    }
+
+    .fade-in-container::before,
+    .fade-in-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 10em;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    }
+
+    .fade-in-container::before {
+    left: 0;
+    background: linear-gradient(90deg,rgba(23, 23, 23, 1) 10%, transparent);
+    }
+
+    .fade-in-container::after {
+    right: 0;
+    background: linear-gradient(270deg,rgba(23, 23, 23, 1) 10%, transparent);
+    }
+
+    .media-scroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* No position:relative needed here unless for other internal elements */
+    }
+
+    .media-scroller::-webkit-scrollbar {
+    display: none;
+    }
+
+    .media-scroller-content {
+    width: fit-content;
+    }
