@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Container, SimpleGrid, Title, Text, Center, Loader, Space, Alert } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api'; // Adjust path as needed
+import { ArticleCard } from '@/app/components/ArticleCard/ArticleCard';
+
 
 // Define the interface for the article data
 interface ArticleItem {
@@ -13,7 +15,8 @@ interface ArticleItem {
   createdAt: string;
   slug: string;
   publishedAt: string | null; // publishedAt can be null
-  cover: {
+  // Updated: cover can now be null, reflecting Strapi's behavior for unset relations
+  cover: { // <--- Changed this to directly under ArticleItem
     formats: {
       medium?: { url: string };
       thumbnail?: { url: string };
@@ -21,7 +24,7 @@ interface ArticleItem {
       large?: { url: string };
     };
     url: string;
-  };
+  } | null; // <--- Changed to allow null
   author: {
     name: string;
     email: string;
@@ -30,6 +33,7 @@ interface ArticleItem {
     name: string;
     slug: string;
   }[];
+  coverUrl: string;
   content: string; // Add content if you plan to show it
 }
 
@@ -65,23 +69,23 @@ export default function ArticlesPage() {
         const response = await fetchFromStrapi('/api/articles?populate=*');
         
         const mappedItems: ArticleItem[] = response.data.map((item: any) => {
-          // Construct coverUrl safely
+          // Refined: Safely get cover attributes, then construct coverUrl
+          // Access item.cover directly, as per the provided JSON structure
+          const coverAttributes = item.cover?.formats?.medium || item.cover; // <--- Corrected access path
           const coverUrl = process.env.NEXT_PUBLIC_API_BASE_URL +
-            (item.attributes.cover?.data?.attributes?.formats?.medium?.url ||
-             item.attributes.cover?.data?.attributes?.url ||
-             ''); // Fallback to empty string if no cover
+            (coverAttributes?.url || ''); // Fallback to empty string if no cover
 
           return {
             id: item.id,
-            title: item.attributes.title,
-            description: item.attributes.description,
-            createdAt: item.attributes.createdAt,
-            slug: item.attributes.slug,
-            publishedAt: item.attributes.publishedAt, // This can be null
+            title: item.title, // <--- Corrected to item.title (direct access)
+            description: item.description, // <--- Corrected to item.description (direct access)
+            createdAt: item.createdAt, // <--- Corrected to item.createdAt (direct access)
+            slug: item.slug, // <--- Corrected to item.slug (direct access)
+            publishedAt: item.publishedAt, // This can be null
             coverUrl: coverUrl,
-            author: item.attributes.author?.data?.attributes || { name: 'Unknown Author', email: '' }, // Handle potential null author
-            categories: item.attributes.categories?.data?.map((cat: any) => cat.attributes) || [],
-            content: item.attributes.content,
+            author: item.author || { name: 'Unknown Author', email: '' }, // <--- Corrected to item.author (direct access)
+            categories: item.categories || [], // <--- Corrected to item.categories (direct access)
+            content: item.content, // <--- Corrected to item.content (direct access)
           };
         });
         setArticles(mappedItems);
