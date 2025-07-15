@@ -2,10 +2,11 @@
 
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
-import { Container, SimpleGrid, Title, Card, Image, Text, Center, Alert, Group, Badge, Button } from '@mantine/core';
+import { Container, SimpleGrid, Title, Card, Image, Text, Center, Alert, Group, Badge, Button, Select, TextInput, Box } from '@mantine/core';
 import { IconChevronRight, IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
 import Loader from './loader';
+import { DatePickerInput } from '@mantine/dates';
 
 const Header = dynamic(() => import('@/app/components/Header/Header'));
 const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
@@ -60,14 +61,45 @@ export default function ArticlesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // New state variables for filters
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedAuthor, setSelectedAuthor] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  // You might also want to store a list of available categories and authors for dropdowns
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [availableAuthors, setAvailableAuthors] = useState<string[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        const queryParams = new URLSearchParams();
+
+        if (selectedCategory) {
+          queryParams.append('filters[categories][slug][$eq]', selectedCategory);
+        }
+        if (selectedAuthor) {
+          queryParams.append('filters[author][name][$eq]', selectedAuthor);
+        }
+        if (searchQuery) {
+            // Apply search to both title and description for broader results
+            queryParams.append('filters[$or][0][title][$containsi]', searchQuery);
+            queryParams.append('filters[$or][1][description][$containsi]', searchQuery);
+        }
+        if (startDate) {
+          queryParams.append('filters[publishedAt][$gte]', startDate.toISOString());
+        }
+        if (endDate) {
+          queryParams.append('filters[publishedAt][$lte]', endDate.toISOString());
+        }
+
+        const articlesQuery = `/api/articles?populate=*&${queryParams.toString()}`;
+        console.log("Fetching articles with query:", articlesQuery); // Debugging line
 
         const [articlesRes, proyekRes] = await Promise.all([
-          fetchFromStrapi('/api/articles?populate=*'),
+          fetchFromStrapi(articlesQuery),
           fetchFromStrapi('/api/title-proyek?populate=images'),
         ]);
 
@@ -116,6 +148,18 @@ export default function ArticlesPage() {
         };
       }
 
+        // Populate available categories and authors (do this once on initial load or whenever articles change)
+        const categoriesSet = new Set<string>();
+        const authorsSet = new Set<string>();
+        articlesRes.data.forEach((item: any) => {
+            item.categories?.forEach((cat: any) => categoriesSet.add(cat.slug));
+            if (item.author?.name) {
+                authorsSet.add(item.author.name);
+            }
+        });
+        setAvailableCategories(Array.from(categoriesSet));
+        setAvailableAuthors(Array.from(authorsSet));
+
         setProjects(mappedProyek);
         setArticles(mappedArticles);
       } catch (err) {
@@ -127,7 +171,8 @@ export default function ArticlesPage() {
     };
 
     fetchData();
-  }, []);
+    // Add filter state variables to the dependency array
+  }, [selectedCategory, selectedAuthor, searchQuery, startDate, endDate]);
 
   if (loading) {
     return (
@@ -171,6 +216,60 @@ export default function ArticlesPage() {
         <Center>
           <Title order={1} m="lg">Latest Project</Title>
         </Center>
+
+        <Box my="lg" p="md" style={{ border: '1px solid #eee', borderRadius: '8px' }}>
+          <Title order={3} mb="md">Filter Articles</Title>
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
+            <Select
+              label="Filter by Category"
+              placeholder="Select a category"
+              data={availableCategories.map(cat => ({ value: cat, label: cat }))}
+              value={selectedCategory}
+              onChange={(value) => setSelectedCategory(value || '')}
+              clearable
+            />
+            <Select
+              label="Filter by Author"
+              placeholder="Select an author"
+              data={availableAuthors.map(author => ({ value: author, label: author }))}
+              value={selectedAuthor}
+              onChange={(value) => setSelectedAuthor(value || '')}
+              clearable
+            />
+            <DatePickerInput
+              label="Published After"
+              placeholder="Pick date"
+              value={startDate}
+              onChange={setStartDate}
+              clearable
+            />
+            <DatePickerInput
+              label="Published Before"
+              placeholder="Pick date"
+              value={endDate}
+              onChange={setEndDate}
+              clearable
+            />
+          </SimpleGrid>
+          <TextInput
+            label="Search by Title or Description"
+            placeholder="Enter keywords"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.currentTarget.value)}
+            mt="md"
+          />
+          <Group mt="md">
+            <Button onClick={() => {
+                setSelectedCategory('');
+                setSelectedAuthor('');
+                setSearchQuery('');
+                setStartDate(null);
+                setEndDate(null);
+            }} variant="outline">
+                Clear Filters
+            </Button>
+          </Group>
+        </Box>
 
         {articles.length === 0 ? (
           <Center style={{ height: '200px' }}>

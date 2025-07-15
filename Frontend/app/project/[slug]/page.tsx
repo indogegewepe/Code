@@ -108,7 +108,6 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             <span>Tidak ada kategori</span>
           )}</span>}
         </Text>
-        <Text mb="lg">{article.description}</Text>
         <Markdown
           components={{
             h1: ({ node, ...props }) => <h1 className="text-4xl font-bold my-4 " {...props} />,
