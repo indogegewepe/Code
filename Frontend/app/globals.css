@@ -203,14 +203,6 @@ body {
     }
 }
 
-.Whatsapp{
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-}
-
 .grid-bg{
     background-color: light-dark(#4c4c4c, #171717);
     &:hover {

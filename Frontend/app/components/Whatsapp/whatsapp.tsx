@@ -5,6 +5,7 @@ import { Button } from '@mantine/core';
 import { ContainerTextFlip } from '@/app/components/ui/container-text-flip';
 import { fetchFromStrapi } from '@/lib/api';
 import { useEffect, useState } from 'react';
+import classes from '@/app/components/Whatsapp/whatsapp.module.css';
 
 export function WhatsappText() {
   const [wasapText, setWasapText] = useState<string[]>([]);
@@ -40,7 +41,7 @@ export default function WhatsappButton() {
 
         // Ambil nomor dari response
         const phone = data.data?.PhoneNumber?.replace('+', '');
-        if (phone) setWasapNum("6289526975000");
+        if (phone) { setWasapNum("6289526975000") };
       } catch (error) {
         console.error("Failed to fetch WhatsApp Phone Number:", error);
       }
@@ -58,7 +59,7 @@ export default function WhatsappButton() {
       color="green"
       radius="xl"
       size="xl"
-      className="Whatsapp"
+      className={classes.Whatsapp}
       rightSection={<IconBrandWhatsappFilled />}
       disabled={!wasapNum}
     >
