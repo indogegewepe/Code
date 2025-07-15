@@ -48,7 +48,7 @@ export default function Project() {
       <div className="heroContentThird">
         <Title className="text-center">Latest Projects</Title>
         <div>
-          <BentoGrid className="mx-auto md:auto-rows-[20rem]">
+          <BentoGrid className="mx-auto md:auto-rows-[20rem] pb-12">
             {articles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).slice(0, 3).map((item) => (
               <BentoGridItem
                 key={item.id}
@@ -66,7 +66,7 @@ export default function Project() {
                 }
                 className="md:col-span-1"
                 icon={
-                  <Badge variant="light" radius="sm" color="#007BFF">
+                  <Badge variant="light" radius="sm">
                     {new Date(item.publishedAt).toLocaleDateString('id-ID')}
                   </Badge>
                 }

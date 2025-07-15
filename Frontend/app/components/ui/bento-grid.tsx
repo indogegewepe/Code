@@ -1,4 +1,7 @@
 import { cn } from '@/lib/utils';
+import { IconChevronRight } from '@tabler/icons-react';
+import { Button } from '@mantine/core';
+
 
 export const BentoGrid = ({
   className,
@@ -10,7 +13,7 @@ export const BentoGrid = ({
   return (
     <div
       className={cn(
-        'mx-auto grid max-w-7xl grid-cols-1 gap-4 md:auto-rows-[18rem] md:grid-cols-3',
+        'mx-auto grid max-w-7xl grid-cols-1 gap-6 md:auto-rows-[18rem] md:grid-cols-3',
         className
       )}
     >
@@ -38,7 +41,7 @@ export const BentoGridItem = ({
     <a
       href={href}
       className={cn(
-        'grid-bg group/bento shadow-input row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-neutral-200 p-4 transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:shadow-none',
+        'grid-bg h-fit group/bento shadow-input row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-neutral-200 p-4 transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:shadow-none',
         className
       )}
     >
@@ -48,6 +51,9 @@ export const BentoGridItem = ({
         <div className="mt-2 mb-2 font-sans font-bold text-neutral-100 ">{title}</div>
         <div className="font-sans text-xs font-normal text-neutral-100 ">{description}</div>
       </div>
+      <Button variant="transparent" color="blue" fullWidth mt="md" radius="md" rightSection={<IconChevronRight size={14} />}>
+        Baca Selengkapnya
+      </Button>
     </a>
   );
 };

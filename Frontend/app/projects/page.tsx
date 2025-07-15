@@ -203,12 +203,12 @@ export default function ArticlesPage() {
                   />
                 </Card.Section>
                 <Group justify="space-between" mt="md" mb="xs">
-                  <Text fw={500}>{article.title}</Text>
                   <Badge color="#007BFF" variant="light" radius="sm">
                     {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('id-ID') : 'N/A'}
                   </Badge>
+                  <Text fw={500} truncate="end">{article.title}</Text>
                 </Group>
-                <Text size="sm" c="dimmed">
+                <Text size="sm" c="dimmed" truncate="end">
                   {article.description}
                 </Text>
                 <Button variant="transparent" color="blue" fullWidth mt="md" radius="md" rightSection={<IconChevronRight size={14} />}>
