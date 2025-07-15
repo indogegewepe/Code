@@ -26,7 +26,6 @@ export const BentoGridItem = ({
   header,
   icon,
   href = '',
-  target = '_blank',
 }: {
   className?: string;
   title?: string | React.ReactNode;
@@ -34,12 +33,10 @@ export const BentoGridItem = ({
   header?: React.ReactNode;
   icon?: React.ReactNode;
   href?: string;
-  target?: string;
 }) => {
   return (
     <a
       href={href}
-      target={target}
       className={cn(
         'grid-bg group/bento shadow-input row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-neutral-200 p-4 transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:shadow-none',
         className

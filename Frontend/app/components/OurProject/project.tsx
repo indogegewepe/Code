@@ -10,6 +10,7 @@ interface ArticleItem {
   title: string;
   description: string;
   createdAt: string;
+  publishedAt: string;
   coverUrl: string;
   slug: string;
 }
@@ -26,6 +27,7 @@ export default function Project() {
           title: item.title,
           description: item.description,
           createdAt: item.createdAt,
+          publishedAt: item.publishedAt,
           slug: item.slug,
           coverUrl:
             process.env.NEXT_PUBLIC_API_BASE_URL +
@@ -47,7 +49,7 @@ export default function Project() {
         <Title className="text-center">Latest Projects</Title>
         <div>
           <BentoGrid className="mx-auto md:auto-rows-[20rem]">
-            {articles.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3).map((item) => (
+            {articles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).slice(0, 3).map((item) => (
               <BentoGridItem
                 key={item.id}
                 title={<Text truncate="end">{item.title}</Text>}
@@ -65,7 +67,7 @@ export default function Project() {
                 className="md:col-span-1"
                 icon={
                   <Badge variant="light" radius="sm" color="light-dark(#007BFF, #007BFF)">
-                    {new Date(item.createdAt).toLocaleDateString('id-ID')}
+                    {new Date(item.publishedAt).toLocaleDateString('id-ID')}
                   </Badge>
                 }
                 href={`/project/${item.slug}`}

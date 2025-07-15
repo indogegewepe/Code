@@ -6,10 +6,6 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 export default withBundleAnalyzer({
   reactStrictMode: true,
-  swcMinify: true,
-  images: {
-    formats: ['image/webp', 'image/avif'],
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

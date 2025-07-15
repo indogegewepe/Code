@@ -1,157 +1,158 @@
-"use client"; // <--- ADD THIS DIRECTIVE AT THE VERY TOP
+import dynamic from 'next/dynamic';
+import { fetchFromStrapi } from '@/lib/api';
+import { notFound } from 'next/navigation';
+import { Image, Text, Title, Container, Badge } from '@mantine/core';
+import React, { Suspense } from 'react'; // Keep this for React.use
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeHighlight from 'rehype-highlight';
+import Loader from '@/app/loader';
 
-import React, { useState, useEffect } from 'react';
-import { Container, SimpleGrid, Title, Text, Center, Loader, Space, Alert } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { fetchFromStrapi } from '@/lib/api'; // Adjust path as needed
-import { ArticleCard } from '@/app/components/ArticleCard/ArticleCard';
+const Header = dynamic(() => import('@/app/components/Header/Header'));
+const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
+const WhatsappButton = dynamic(() => import('@/app/components/Whatsapp/whatsapp'));
 
-
-// Define the interface for the article data
-interface ArticleItem {
+type ArticleData = {
   id: number;
+  documentId: string;
   title: string;
   description: string;
-  createdAt: string;
   slug: string;
-  publishedAt: string | null; // publishedAt can be null
-  // Updated: cover can now be null, reflecting Strapi's behavior for unset relations
-  cover: { // <--- Changed this to directly under ArticleItem
-    formats: {
-      medium?: { url: string };
-      thumbnail?: { url: string };
-      small?: { url: string };
-      large?: { url: string };
-    };
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  content: string;
+  cover?: {
     url: string;
-  } | null; // <--- Changed to allow null
-  author: {
+  } | null;
+  author?: {
     name: string;
-    email: string;
-  };
-  categories: {
+  } | null;
+  categories?: {
     name: string;
-    slug: string;
-  }[];
-  coverUrl: string;
-  content: string; // Add content if you plan to show it
-}
+  }[] | null;
+};
 
-export default function ArticlesPage() {
-  const [articles, setArticles] = useState<ArticleItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
+  const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // Utility function for fetching from Strapi
-  // You might already have this, if not, create utils/api.ts
-  // For simplicity, I'm providing a basic fetchFromStrapi here.
-  // In a real app, you'd likely handle errors and responses more robustly.
-  // Make sure process.env.NEXT_PUBLIC_API_BASE_URL is set in your .env.local file
-  // e.g., NEXT_PUBLIC_API_BASE_URL=http://localhost:1337
-  // Or remove it if your Strapi is on the same domain and relative paths work.
-  /*
-    // utils/api.ts (Example, adjust as per your actual fetch implementation)
-    export async function fetchFromStrapi(path: string) {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:1337'; // Fallback for development
-      const response = await fetch(`${baseUrl}${path}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
+  const { slug } = params;
+
+  let article: ArticleData | null = null;
+  let error: string | null = null;
+
+  try {
+    const response = await fetchFromStrapi(`/api/articles?filters[slug][$eq]=${slug}&populate=*`);
+
+    if (response && Array.isArray(response.data) && response.data.length > 0) {
+      article = response.data[0];
+    } else {
+      notFound();
     }
-  */
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetchFromStrapi('/api/articles?populate=*');
-        
-        const mappedItems: ArticleItem[] = response.data.map((item: any) => {
-          // Refined: Safely get cover attributes, then construct coverUrl
-          // Access item.cover directly, as per the provided JSON structure
-          const coverAttributes = item.cover?.formats?.medium || item.cover; // <--- Corrected access path
-          const coverUrl = process.env.NEXT_PUBLIC_API_BASE_URL +
-            (coverAttributes?.url || ''); // Fallback to empty string if no cover
-
-          return {
-            id: item.id,
-            title: item.title, // <--- Corrected to item.title (direct access)
-            description: item.description, // <--- Corrected to item.description (direct access)
-            createdAt: item.createdAt, // <--- Corrected to item.createdAt (direct access)
-            slug: item.slug, // <--- Corrected to item.slug (direct access)
-            publishedAt: item.publishedAt, // This can be null
-            coverUrl: coverUrl,
-            author: item.author || { name: 'Unknown Author', email: '' }, // <--- Corrected to item.author (direct access)
-            categories: item.categories || [], // <--- Corrected to item.categories (direct access)
-            content: item.content, // <--- Corrected to item.content (direct access)
-          };
-        });
-        setArticles(mappedItems);
-      } catch (err) {
-        console.error('Failed to fetch articles:', err);
-        setError('Failed to load articles. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []); // Empty dependency array means this runs once on mount
-
-  if (loading) {
-    return (
-      <Container size="lg" py="xl">
-        <Center style={{ height: '300px' }}>
-          <Loader size="lg" />
-          <Text ml="md">Loading articles...</Text>
-        </Center>
-      </Container>
-    );
+  } catch (err: any) {
+    console.error('Error fetching article by slug:', err);
+    error = `Failed to load article: ${err.message || 'Unknown error'}`;
   }
 
   if (error) {
     return (
-      <Container size="lg" py="xl">
-        <Alert icon={<IconAlertCircle size="1rem" />} title="Error!" color="red">
-          {error}
-        </Alert>
+      <Container size="md" py="xl">
+        <Title order={1} className="text-center" c="red">Error</Title>
+        <Text className="text-center">{error}</Text>
       </Container>
     );
   }
 
-  return (
-    <Container size="lg" py="xl">
-      <Title order={1} mb="lg" ta="center">Artikel Terbaru</Title>
-      <Text size="lg" c="dimmed" ta="center" mb="xl">Temukan berbagai artikel menarik seputar teknologi, budaya, dan ekonomi.</Text>
+  if (!article) {
+    return (
+      <Container size="md" py="xl">
+        <Title order={1} className="text-center">Article not found</Title>
+      </Container>
+    );
+  }
 
-      {articles.length === 0 ? (
-        <Center style={{ height: '200px' }}>
-          <Text size="lg" c="dimmed">No articles found.</Text>
-        </Center>
-      ) : (
-        <SimpleGrid
-          cols={{ base: 1, sm: 2, md: 3 }}
-          spacing="lg"
-          verticalSpacing="xl"
-        >
-          {articles.map((article) => (
-            <ArticleCard
-              key={article.id}
-              id={article.id}
-              title={article.title}
-              description={article.description}
-              coverUrl={article.coverUrl}
-              slug={article.slug}
-              createdAt={article.createdAt}
-              publishedAt={article.publishedAt}
-            />
-          ))}
-        </SimpleGrid>
-      )}
-      <Space h="xl" />
-      <Space h="xl" />
-    </Container>
+  // FIX 3: Ensure template literal for coverUrl is fully enclosed in backticks
+  const coverUrl = article.cover?.url
+    ? `${STRAPI_BASE_URL}${article.cover.url}`
+    : '/assets/img/placeholder.webp';
+
+  const publishedDate = new Date(article.publishedAt).toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+
+  return (
+    <>
+      <Suspense fallback={<Loader />}>
+        <nav className="header">
+          <Header />
+        </nav>
+
+        <Container size="lg" mt={70}>
+          <Title order={1} mb="md" textWrap="balance" className='text-center'>{article.title}</Title>
+          {article.cover && (
+            <Image src={coverUrl} alt={article.title} radius="md" mb="md" h={300} />
+          )}
+          <Text size="sm" c="dimmed" mb="sm">
+            Published: <Badge variant="light" radius="sm">{publishedDate}</Badge>
+            {article.author && <span> by {article.author.name} </span>}
+            {article.categories && <span> 
+            {article.categories && article.categories.length > 0 ? (
+              <span>
+                in{' '}
+                {article.categories.map((cat, index) => (
+                  <span key={cat.name}>
+                    {cat.name}
+                    {index < article.categories.length - 1 ? ', ' : ''}
+                  </span>
+                ))}
+              </span>
+            ) : (
+              <span>Tidak ada kategori</span>
+            )}</span>}
+          </Text>
+          <Text mb="lg">{article.description}</Text>
+          <Markdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw, rehypeHighlight]}
+            components={{
+              h1: ({ node, ...props }) => <h1 className="text-4xl font-bold my-4 " {...props} />,
+              h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold my-3" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="text-2xl font-semibold my-2" {...props} />,
+              p: ({ node, ...props }) => <p className="my-2 leading-relaxed" {...props} />,
+              ul: ({ node, ...props }) => <ul className="list-disc ml-6 my-2" {...props} />,
+              ol: ({ node, ...props }) => <ol className="list-decimal ml-6 my-2" {...props} />,
+              li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+              strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
+              em: ({ node, ...props }) => <em className="italic" {...props} />,
+              blockquote: ({ node, ...props }) => (
+                <blockquote className="border-l-4 border-blue-500 bg-gray-600/50 pl-4 italic my-4 py-2 px-4 rounded" {...props} />
+              ),
+              a: ({ node, ...props }) => (
+                <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
+              ),
+              img: ({ node, ...props }) => (
+                <img className="rounded my-4 max-w-full h-auto" {...props} />
+              ),
+              code: ({ node, ...props }) => (
+                <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm font-mono" {...props} />
+              ),
+              pre: ({ node, ...props }) => (
+                <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto my-4" {...props} />
+              ),
+              hr: () => <hr className="my-6 border-t" />,
+            }}
+          >
+            {article.content}
+          </Markdown>
+        </Container>
+
+        <Footer />
+
+        <WhatsappButton />
+      </Suspense>
+    </>
   );
 }

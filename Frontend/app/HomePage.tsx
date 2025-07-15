@@ -69,7 +69,7 @@ export default function HomePage() {
             </Button>
             <Button
               component="a"
-              href="#contact"
+              href="/projects"
               variant="outline"
               color="#007BFF"
               rightSection={<IconAddressBook size={14} />}
