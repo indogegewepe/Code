@@ -4,7 +4,7 @@ import classes from './ContactUs.module.css';
 
 export default function ContactUs() {
   return (
-    <Container fluid className="heroContact pb-6 rounded-md">
+    <Container fluid className="heroContact">
       <Container size="lg" className="contactContent">
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={50}>
           <div>

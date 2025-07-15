@@ -189,7 +189,6 @@ body {
 
 .heroContact{
     background-color: light-dark(#4c4c4c, #171717);
-    border-radius: var(--mantine-radius-md);
 }
 
 .contactContent {
