@@ -3,7 +3,7 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import dynamic from 'next/dynamic';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
 import { Container, SimpleGrid, Title, Card, Image, Text, Center, Alert, Group, Badge, Button, Select, TextInput } from '@mantine/core';
 import { IconChevronRight, IconAlertCircle, IconRestore } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
@@ -64,14 +64,14 @@ export default function ArticlesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // New state variables for filters
+  // State variables for filters
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedAuthor, setSelectedAuthor] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  // You might also want to store a list of available categories and authors for dropdowns
+  // Lists for filter dropdowns
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [availableAuthors, setAvailableAuthors] = useState<string[]>([]);
 
@@ -79,50 +79,51 @@ export default function ArticlesPage() {
   const [hasMore, setHasMore] = useState(true);
   const [totalArticles, setTotalArticles] = useState(0);
 
+  // Function to build query parameters
+  const buildQueryParams = useCallback((currentPage: number) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append('pagination[page]', currentPage.toString());
+    queryParams.append('pagination[pageSize]', '9'); // Assuming 9 items per page
+
+    if (selectedCategory) {
+      queryParams.append('filters[categories][slug][$eq]', selectedCategory);
+    }
+    if (selectedAuthor) {
+      queryParams.append('filters[author][name][$eq]', selectedAuthor);
+    }
+    if (searchQuery) {
+      queryParams.append('filters[$or][0][title][$containsi]', searchQuery);
+      queryParams.append('filters[$or][1][description][$containsi]', searchQuery);
+    }
+    if (startDate) {
+      const parsedStartDate = new Date(startDate);
+      if (!isNaN(parsedStartDate.getTime())) {
+        parsedStartDate.setDate(parsedStartDate.getDate() - 1);
+        parsedStartDate.setUTCHours(17, 0, 0, 0); // Start of the day WIB
+        queryParams.append('filters[publishedAt][$gte]', parsedStartDate.toISOString());
+      }
+    }
+    if (endDate) {
+      const parsedEndDate = new Date(endDate);
+      if (!isNaN(parsedEndDate.getTime())) {
+        parsedEndDate.setUTCHours(16, 59, 59, 999); // End of the day WIB
+        queryParams.append('filters[publishedAt][$lte]', parsedEndDate.toISOString());
+      }
+    }
+    return queryParams;
+  }, [selectedCategory, selectedAuthor, searchQuery, startDate, endDate]);
+
+  // Initial data fetch and filter changes handler
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      setArticles([]); // Reset articles when filters change or on initial load
+      setPage(1); // Reset page to 1
+      setHasMore(true); // Assume there's more data initially
+
       try {
-        const queryParams = new URLSearchParams();
-
-        if (selectedCategory) {
-          queryParams.append('filters[categories][slug][$eq]', selectedCategory);
-        }
-        if (selectedAuthor) {
-          queryParams.append('filters[author][name][$eq]', selectedAuthor);
-        }
-        if (searchQuery) {
-            // Apply search to both title and description for broader results
-            queryParams.append('filters[$or][0][title][$containsi]', searchQuery);
-            queryParams.append('filters[$or][1][description][$containsi]', searchQuery);
-        }
-        if (startDate) {
-          // Convert startDate string to a Date object
-          const parsedStartDate = new Date(startDate);
-
-          // You can add a check here to ensure it's a valid date
-          if (isNaN(parsedStartDate.getTime())) {
-            console.error("Invalid startDate string provided:", startDate);
-            // Handle the error appropriately, e.g., return or throw
-          } else {
-            // Optionally, if you want to ensure it's the beginning of the day in UTC:
-            parsedStartDate.setUTCHours(0, 0, 0, 0);
-            queryParams.append('filters[publishedAt][$gte]', parsedStartDate.toISOString());
-          }
-        }
-        if (endDate) {
-          // Assuming endDate might also be a string, apply the same parsing
-          const parsedEndDate = new Date(endDate);
-
-          if (isNaN(parsedEndDate.getTime())) {
-            console.error("Invalid endDate string provided:", endDate);
-            // Handle the error
-          } else {
-            // Optionally, if you want to ensure it's the end of the day in UTC:
-            parsedEndDate.setUTCHours(23, 59, 59, 999);
-            queryParams.append('filters[publishedAt][$lte]', parsedEndDate.toISOString());
-          }
-        }
-
+        const queryParams = buildQueryParams(1);
         const articlesQuery = `/api/articles?populate=*&${queryParams.toString()}`;
 
         const [articlesRes, proyekRes] = await Promise.all([
@@ -130,14 +131,12 @@ export default function ArticlesPage() {
           fetchFromStrapi('/api/title-proyek?populate=images'),
         ]);
 
-        // Mapping articles
         const mappedArticles: ArticleItem[] = articlesRes.data.map((item: any) => {
           const coverAttributes = item.cover?.formats?.medium || item.cover;
-          const coverUrl = process.env.NEXT_PUBLIC_API_BASE_URL +
-            (coverAttributes?.url || '');
+          const coverUrl = process.env.NEXT_PUBLIC_API_BASE_URL + (coverAttributes?.url || '');
 
           return {
-           id: item.id,
+            id: item.id,
             title: item.title,
             description: item.description,
             createdAt: item.createdAt,
@@ -150,46 +149,47 @@ export default function ArticlesPage() {
           };
         });
 
-        const proyekData = proyekRes.data;
-        let mappedProyek: ProyekItem | null = null;
-
-        if (proyekData && proyekData.images) {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-        const image = proyekData.images;
-
-        mappedProyek = {
-          id: proyekData.id,
-          title: proyekData.Title,
-          description: proyekData.Description,
-          image: {
-            url: baseUrl + (image.url || ''),
-            alternativeText: image.alternativeText || null,
-            width: image.width || 0,
-            height: image.height || 0,
-            formats: {
-              medium: image.formats?.medium?.url
-                ? { url: baseUrl + image.formats.medium.url }
-                : undefined,
-            },
-          },
-        };
-      }
-
-        // Populate available categories and authors (do this once on initial load or whenever articles change)
+        // Collect available categories and authors (consider fetching these separately if the list is large or static)
         const categoriesSet = new Set<string>();
         const authorsSet = new Set<string>();
         articlesRes.data.forEach((item: any) => {
-            item.categories?.forEach((cat: any) => categoriesSet.add(cat.slug));
-            if (item.author?.name) {
-                authorsSet.add(item.author.name);
-            }
+          item.categories?.forEach((cat: any) => categoriesSet.add(cat.slug));
+          if (item.author?.name) {
+            authorsSet.add(item.author.name);
+          }
         });
         setAvailableCategories(Array.from(categoriesSet));
         setAvailableAuthors(Array.from(authorsSet));
 
+        const proyekData = proyekRes.data;
+        let mappedProyek: ProyekItem | null = null;
+        if (proyekData && proyekData.images) {
+          const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+          const image = proyekData.images;
+          mappedProyek = {
+            id: proyekData.id,
+            title: proyekData.Title,
+            description: proyekData.Description,
+            image: {
+              url: baseUrl + (image.url || ''),
+              alternativeText: image.alternativeText || null,
+              width: image.width || 0,
+              height: image.height || 0,
+              formats: {
+                medium: image.formats?.medium?.url
+                  ? { url: baseUrl + image.formats.medium.url }
+                  : undefined,
+              },
+            },
+          };
+        }
         setProjects(mappedProyek);
         setArticles(mappedArticles);
+        setTotalArticles(articlesRes.meta.pagination.total);
+        setHasMore(articlesRes.meta.pagination.page * articlesRes.meta.pagination.pageSize < articlesRes.meta.pagination.total);
+
       } catch (err) {
+        console.error('Failed to load initial content:', err);
         setError('Failed to load content. Please try again later.');
       } finally {
         setLoading(false);
@@ -197,48 +197,51 @@ export default function ArticlesPage() {
     };
 
     fetchData();
-    // Add filter state variables to the dependency array
-  }, [selectedCategory, selectedAuthor, searchQuery, startDate, endDate]);
+  }, [selectedCategory, selectedAuthor, searchQuery, startDate, endDate, buildQueryParams]); // Add buildQueryParams to dependency array
 
+  // Function to fetch more data for infinite scroll
   const fetchMoreData = async () => {
+    if (!hasMore) return; // Prevent fetching if no more data
+
     try {
-      const queryParams = new URLSearchParams();
-      queryParams.append('pagination[page]', (page + 1).toString());
-      queryParams.append('pagination[pageSize]', '9'); // Assuming 9 items per page
-
-      if (selectedCategory) {
-        queryParams.append('filters[categories][slug][$eq]', selectedCategory);
-      }
-      if (selectedAuthor) {
-        queryParams.append('filters[author][name][$eq]', selectedAuthor);
-      }
-      if (searchQuery) {
-        queryParams.append('filters[$or][0][title][$containsi]', searchQuery);
-        queryParams.append('filters[$or][1][description][$containsi]', searchQuery);
-      }
-      if (startDate) {
-        queryParams.append('filters[publishedAt][$gte]', startDate.toISOString());
-      }
-      if (endDate) {
-        queryParams.append('filters[publishedAt][$lte]', endDate.toISOString());
-      }
-
+      const nextPage = page + 1;
+      const queryParams = buildQueryParams(nextPage);
       const articlesRes = await fetchFromStrapi(`/api/articles?populate=*&${queryParams.toString()}`);
-      const newArticles = articlesRes.data.map((item: any) => ({
-        // ... (map article data similar to initial fetch)
-      }));
-      setArticles((prevArticles) => [...prevArticles, ...newArticles]);
-      setPage((prevPage) => prevPage + 1);
-      setHasMore(newArticles.length > 0); // Check if there are more articles to load
+      
+      const newFetchedArticles: ArticleItem[] = articlesRes.data.map((item: any) => {
+        const coverAttributes = item.cover?.formats?.medium || item.cover;
+        const coverUrl = process.env.NEXT_PUBLIC_API_BASE_URL + (coverAttributes?.url || '');
+        return {
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          createdAt: item.createdAt,
+          slug: item.slug,
+          publishedAt: item.publishedAt,
+          coverUrl,
+          author: item.author || { name: 'Unknown Author', email: '' },
+          categories: item.categories || [],
+          content: item.content,
+        };
+      });
+
+      // Filter out duplicates before adding to the state
+      const existingArticleIds = new Set(articles.map(article => article.id));
+      const uniqueNewArticles = newFetchedArticles.filter(article => !existingArticleIds.has(article.id));
+
+      setArticles((prevArticles) => [...prevArticles, ...uniqueNewArticles]);
+      setPage(nextPage);
+      setHasMore(nextPage * articlesRes.meta.pagination.pageSize < articlesRes.meta.pagination.total);
+      setTotalArticles(articlesRes.meta.pagination.total); // Update total if it might change
+
     } catch (error) {
       console.error('Error fetching more articles:', error);
+      // Optionally set an error state or show a toast notification for infinite scroll failure
     }
   };
 
   if (loading) {
-    return (
-      <Loader />
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -360,7 +363,7 @@ export default function ArticlesPage() {
                 spacing="lg"
                 verticalSpacing="xl"
               >
-                {articles.map((article) => (
+                {articles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).map((article) => (
                   <Card 
                     shadow="sm" 
                     padding="lg" 
@@ -400,7 +403,6 @@ export default function ArticlesPage() {
       </Container>
 
       <Footer />
-
       <WhatsappButton />
     </>
   );
