@@ -1,5 +1,7 @@
 "use client";
 
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
 import { Container, SimpleGrid, Title, Card, Image, Text, Center, Alert, Group, Badge, Button, Select, TextInput, Box } from '@mantine/core';
@@ -89,14 +91,34 @@ export default function ArticlesPage() {
             queryParams.append('filters[$or][1][description][$containsi]', searchQuery);
         }
         if (startDate) {
-          queryParams.append('filters[publishedAt][$gte]', startDate.toISOString());
+          // Convert startDate string to a Date object
+          const parsedStartDate = new Date(startDate);
+
+          // You can add a check here to ensure it's a valid date
+          if (isNaN(parsedStartDate.getTime())) {
+            console.error("Invalid startDate string provided:", startDate);
+            // Handle the error appropriately, e.g., return or throw
+          } else {
+            // Optionally, if you want to ensure it's the beginning of the day in UTC:
+            parsedStartDate.setUTCHours(0, 0, 0, 0);
+            queryParams.append('filters[publishedAt][$gte]', parsedStartDate.toISOString());
+          }
         }
         if (endDate) {
-          queryParams.append('filters[publishedAt][$lte]', endDate.toISOString());
+          // Assuming endDate might also be a string, apply the same parsing
+          const parsedEndDate = new Date(endDate);
+
+          if (isNaN(parsedEndDate.getTime())) {
+            console.error("Invalid endDate string provided:", endDate);
+            // Handle the error
+          } else {
+            // Optionally, if you want to ensure it's the end of the day in UTC:
+            parsedEndDate.setUTCHours(23, 59, 59, 999);
+            queryParams.append('filters[publishedAt][$lte]', parsedEndDate.toISOString());
+          }
         }
 
         const articlesQuery = `/api/articles?populate=*&${queryParams.toString()}`;
-        console.log("Fetching articles with query:", articlesQuery); // Debugging line
 
         const [articlesRes, proyekRes] = await Promise.all([
           fetchFromStrapi(articlesQuery),
@@ -163,7 +185,6 @@ export default function ArticlesPage() {
         setProjects(mappedProyek);
         setArticles(mappedArticles);
       } catch (err) {
-        console.error('Failed to fetch data:', err);
         setError('Failed to load content. Please try again later.');
       } finally {
         setLoading(false);
@@ -217,7 +238,13 @@ export default function ArticlesPage() {
           <Title order={1} m="lg">Latest Project</Title>
         </Center>
 
-        <Box my="lg" p="md" style={{ border: '1px solid #eee', borderRadius: '8px' }}>
+        <Card 
+          my="lg"
+          shadow="sm" 
+          padding="lg" 
+          radius="md" 
+          withBorder 
+          >
           <Title order={3} mb="md">Filter Articles</Title>
           <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
             <Select
@@ -269,7 +296,7 @@ export default function ArticlesPage() {
                 Clear Filters
             </Button>
           </Group>
-        </Box>
+        </Card>
 
         {articles.length === 0 ? (
           <Center style={{ height: '200px' }}>

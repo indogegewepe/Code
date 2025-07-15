@@ -4,12 +4,11 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-export default withBundleAnalyzer({
+const config = {
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
-  },
-});
+};
+
+export default withBundleAnalyzer(config);
