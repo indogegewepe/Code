@@ -2,12 +2,8 @@ import dynamic from 'next/dynamic';
 import { fetchFromStrapi } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import { Image, Text, Title, Container, Badge } from '@mantine/core';
-import React, { Suspense } from 'react'; // Keep this for React.use
+import React from 'react';
 import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import rehypeHighlight from 'rehype-highlight';
-import Loader from '@/app/loader';
 
 const Header = dynamic(() => import('@/app/components/Header/Header'));
 const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
@@ -85,74 +81,70 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
   return (
     <>
-      <Suspense fallback={<Loader />}>
-        <nav className="header">
-          <Header />
-        </nav>
+      <nav className="header">
+        <Header />
+      </nav>
 
-        <Container size="lg" mt={70}>
-          <Title order={1} mb="md" textWrap="balance" className='text-center'>{article.title}</Title>
-          {article.cover && (
-            <Image src={coverUrl} alt={article.title} radius="md" mb="md" h={300} />
-          )}
-          <Text size="sm" c="dimmed" mb="sm">
-            Published: <Badge variant="light" radius="sm">{publishedDate}</Badge>
-            {article.author && <span> by {article.author.name} </span>}
-            {article.categories && <span> 
-            {article.categories && article.categories.length > 0 ? (
-              <span>
-                in{' '}
-                {article.categories.map((cat, index) => (
-                  <span key={cat.name}>
-                    {cat.name}
-                    {index < article.categories.length - 1 ? ', ' : ''}
-                  </span>
-                ))}
-              </span>
-            ) : (
-              <span>Tidak ada kategori</span>
-            )}</span>}
-          </Text>
-          <Text mb="lg">{article.description}</Text>
-          <Markdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeHighlight]}
-            components={{
-              h1: ({ node, ...props }) => <h1 className="text-4xl font-bold my-4 " {...props} />,
-              h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold my-3" {...props} />,
-              h3: ({ node, ...props }) => <h3 className="text-2xl font-semibold my-2" {...props} />,
-              p: ({ node, ...props }) => <p className="my-2 leading-relaxed" {...props} />,
-              ul: ({ node, ...props }) => <ul className="list-disc ml-6 my-2" {...props} />,
-              ol: ({ node, ...props }) => <ol className="list-decimal ml-6 my-2" {...props} />,
-              li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-              strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
-              em: ({ node, ...props }) => <em className="italic" {...props} />,
-              blockquote: ({ node, ...props }) => (
-                <blockquote className="border-l-4 border-blue-500 bg-gray-600/50 pl-4 italic my-4 py-2 px-4 rounded" {...props} />
-              ),
-              a: ({ node, ...props }) => (
-                <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
-              ),
-              img: ({ node, ...props }) => (
-                <img className="rounded my-4 max-w-full h-auto" {...props} />
-              ),
-              code: ({ node, ...props }) => (
-                <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm font-mono" {...props} />
-              ),
-              pre: ({ node, ...props }) => (
-                <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto my-4" {...props} />
-              ),
-              hr: () => <hr className="my-6 border-t" />,
-            }}
-          >
-            {article.content}
-          </Markdown>
-        </Container>
+      <Container size="lg" mt={70}>
+        <Title order={1} mb="md" textWrap="balance" className='text-center'>{article.title}</Title>
+        {article.cover && (
+          <Image src={coverUrl} alt={article.title} radius="md" mb="md" h={300} />
+        )}
+        <Text size="sm" c="dimmed" mb="sm">
+          Published: <Badge variant="light" radius="sm">{publishedDate}</Badge>
+          {article.author && <span> by {article.author.name} </span>}
+          {article.categories && <span> 
+          {article.categories && article.categories.length > 0 ? (
+            <span>
+              in{' '}
+              {article.categories.map((cat, index) => (
+                <span key={cat.name}>
+                  {cat.name}
+                  {index < article.categories.length - 1 ? ', ' : ''}
+                </span>
+              ))}
+            </span>
+          ) : (
+            <span>Tidak ada kategori</span>
+          )}</span>}
+        </Text>
+        <Text mb="lg">{article.description}</Text>
+        <Markdown
+          components={{
+            h1: ({ node, ...props }) => <h1 className="text-4xl font-bold my-4 " {...props} />,
+            h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold my-3" {...props} />,
+            h3: ({ node, ...props }) => <h3 className="text-2xl font-semibold my-2" {...props} />,
+            p: ({ node, ...props }) => <p className="my-2 leading-relaxed" {...props} />,
+            ul: ({ node, ...props }) => <ul className="list-disc ml-6 my-2" {...props} />,
+            ol: ({ node, ...props }) => <ol className="list-decimal ml-6 my-2" {...props} />,
+            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+            strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
+            em: ({ node, ...props }) => <em className="italic" {...props} />,
+            blockquote: ({ node, ...props }) => (
+              <blockquote className="border-l-4 border-blue-500 bg-gray-600/50 pl-4 italic my-4 py-2 px-4 rounded" {...props} />
+            ),
+            a: ({ node, ...props }) => (
+              <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
+            ),
+            img: ({ node, ...props }) => (
+              <img className="rounded my-4 max-w-full h-auto" {...props} />
+            ),
+            code: ({ node, ...props }) => (
+              <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm font-mono" {...props} />
+            ),
+            pre: ({ node, ...props }) => (
+              <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto my-4" {...props} />
+            ),
+            hr: () => <hr className="my-6 border-t" />,
+          }}
+        >
+          {article.content}
+        </Markdown>
+      </Container>
 
-        <Footer />
+      <Footer />
 
-        <WhatsappButton />
-      </Suspense>
+      <WhatsappButton />
     </>
   );
 }

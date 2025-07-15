@@ -66,7 +66,7 @@ export default function Project() {
                 }
                 className="md:col-span-1"
                 icon={
-                  <Badge variant="light" radius="sm" color="light-dark(#007BFF, #007BFF)">
+                  <Badge variant="light" radius="sm" color="#007BFF">
                     {new Date(item.publishedAt).toLocaleDateString('id-ID')}
                   </Badge>
                 }

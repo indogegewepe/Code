@@ -1,0 +1,31 @@
+{
+  "kind": "singleType",
+  "collectionName": "title_proyeks",
+  "info": {
+    "singularName": "title-proyek",
+    "pluralName": "title-proyeks",
+    "displayName": "TitleProyek"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "text"
+    },
+    "images": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

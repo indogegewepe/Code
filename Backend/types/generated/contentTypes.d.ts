@@ -681,6 +681,36 @@ export interface ApiTextWhatsAppTextWhatsApp
   };
 }
 
+export interface ApiTitleProyekTitleProyek extends Struct.SingleTypeSchema {
+  collectionName: 'title_proyeks';
+  info: {
+    displayName: 'TitleProyek';
+    pluralName: 'title-proyeks';
+    singularName: 'title-proyek';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Text;
+    images: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::title-proyek.title-proyek'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    Title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiWhatsAppWhatsApp extends Struct.SingleTypeSchema {
   collectionName: 'whats_apps';
   info: {
@@ -1232,6 +1262,7 @@ declare module '@strapi/strapi' {
       'api::hero.hero': ApiHeroHero;
       'api::partner.partner': ApiPartnerPartner;
       'api::text-whats-app.text-whats-app': ApiTextWhatsAppTextWhatsApp;
+      'api::title-proyek.title-proyek': ApiTitleProyekTitleProyek;
       'api::whats-app.whats-app': ApiWhatsAppWhatsApp;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
-import { Container, SimpleGrid, Title, Text, Center, Loader, Space, Alert } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { Container, SimpleGrid, Title, Card, Image, Text, Center, Alert, Group, Badge, Button } from '@mantine/core';
+import { IconChevronRight, IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
-import { ArticleCard } from '@/app/components/ArticleCard/ArticleCard';
+import Loader from './loader';
+
+const Header = dynamic(() => import('@/app/components/Header/Header'));
+const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
+const WhatsappButton = dynamic(() => import('@/app/components/Whatsapp/whatsapp'));
 
 interface ArticleItem {
   id: number;
@@ -34,77 +39,99 @@ interface ArticleItem {
   content: string;
 }
 
+interface ProyekItem {
+  id: number;
+  title: string;
+  description: string;
+  image: {
+    url: string;
+    alternativeText?: string | null;
+    width: number;
+    height: number;
+    formats: {
+      medium?: { url: string };
+    };
+  };
+}
+
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<ArticleItem[]>([]);
+  const [proyek, setProjects] = useState<ProyekItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Utility function for fetching from Strapi
-  // You might already have this, if not, create utils/api.ts
-  // For simplicity, I'm providing a basic fetchFromStrapi here.
-  // In a real app, you'd likely handle errors and responses more robustly.
-  // Make sure process.env.NEXT_PUBLIC_API_BASE_URL is set in your .env.local file
-  // e.g., NEXT_PUBLIC_API_BASE_URL=http://localhost:1337
-  // Or remove it if your Strapi is on the same domain and relative paths work.
-  /*
-    // utils/api.ts (Example, adjust as per your actual fetch implementation)
-    export async function fetchFromStrapi(path: string) {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:1337'; // Fallback for development
-      const response = await fetch(`${baseUrl}${path}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    }
-  */
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetchFromStrapi('/api/articles?populate=*');
-        
-        const mappedItems: ArticleItem[] = response.data.map((item: any) => {
-          // Refined: Safely get cover attributes, then construct coverUrl
-          // Access item.cover directly, as per the provided JSON structure
-          const coverAttributes = item.cover?.formats?.medium || item.cover; // <--- Corrected access path
+
+        const [articlesRes, proyekRes] = await Promise.all([
+          fetchFromStrapi('/api/articles?populate=*'),
+          fetchFromStrapi('/api/title-proyek?populate=images'),
+        ]);
+
+        // Mapping articles
+        const mappedArticles: ArticleItem[] = articlesRes.data.map((item: any) => {
+          const coverAttributes = item.cover?.formats?.medium || item.cover;
           const coverUrl = process.env.NEXT_PUBLIC_API_BASE_URL +
-            (coverAttributes?.url || ''); // Fallback to empty string if no cover
+            (coverAttributes?.url || '');
 
           return {
-            id: item.id,
-            title: item.title, // <--- Corrected to item.title (direct access)
-            description: item.description, // <--- Corrected to item.description (direct access)
-            createdAt: item.createdAt, // <--- Corrected to item.createdAt (direct access)
-            slug: item.slug, // <--- Corrected to item.slug (direct access)
-            publishedAt: item.publishedAt, // This can be null
-            coverUrl: coverUrl,
-            author: item.author || { name: 'Unknown Author', email: '' }, // <--- Corrected to item.author (direct access)
-            categories: item.categories || [], // <--- Corrected to item.categories (direct access)
-            content: item.content, // <--- Corrected to item.content (direct access)
+           id: item.id,
+            title: item.title,
+            description: item.description,
+            createdAt: item.createdAt,
+            slug: item.slug,
+            publishedAt: item.publishedAt,
+            coverUrl,
+            author: item.author || { name: 'Unknown Author', email: '' },
+            categories: item.categories || [],
+            content: item.content,
           };
         });
-        setArticles(mappedItems);
+
+        const proyekData = proyekRes.data;
+        let mappedProyek: ProyekItem | null = null;
+
+        if (proyekData && proyekData.images) {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+        const image = proyekData.images;
+
+        mappedProyek = {
+          id: proyekData.id,
+          title: proyekData.Title,
+          description: proyekData.Description,
+          image: {
+            url: baseUrl + (image.url || ''),
+            alternativeText: image.alternativeText || null,
+            width: image.width || 0,
+            height: image.height || 0,
+            formats: {
+              medium: image.formats?.medium?.url
+                ? { url: baseUrl + image.formats.medium.url }
+                : undefined,
+            },
+          },
+        };
+      }
+
+        setProjects(mappedProyek);
+        setArticles(mappedArticles);
       } catch (err) {
-        console.error('Failed to fetch articles:', err);
-        setError('Failed to load articles. Please try again later.');
+        console.error('Failed to fetch data:', err);
+        setError('Failed to load content. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   if (loading) {
     return (
-      <Container size="lg" py="xl">
-        <Center style={{ height: '300px' }}>
-          <Loader size="lg" />
-          <Text ml="md">Loading articles...</Text>
-        </Center>
-      </Container>
+      <Loader />
     );
   }
 
@@ -119,36 +146,83 @@ export default function ArticlesPage() {
   }
 
   return (
-    <Container size="lg" py="xl">
-      <Title order={1} mb="lg" ta="center">Artikel Terbaru</Title>
-      <Text size="lg" c="dimmed" ta="center" mb="xl">Temukan berbagai artikel menarik seputar teknologi, budaya, dan ekonomi.</Text>
+    <>
+      <nav className="header">
+        <Header />
+      </nav>
 
-      {articles.length === 0 ? (
-        <Center style={{ height: '200px' }}>
-          <Text size="lg" c="dimmed">No articles found.</Text>
-        </Center>
-      ) : (
-        <SimpleGrid
-          cols={{ base: 1, sm: 2, md: 3 }}
-          spacing="lg"
-          verticalSpacing="xl"
-        >
-          {articles.map((article) => (
-            <ArticleCard
-              key={article.id}
-              id={article.id}
-              title={article.title}
-              description={article.description}
-              coverUrl={article.coverUrl}
-              slug={article.slug}
-              createdAt={article.createdAt}
-              publishedAt={article.publishedAt}
+      <Container size="lg" className='pt-20'>
+        {proyek && (
+          <div className="bg-blue-500 flex flex-col-reverse md:flex-row h-auto rounded-md mb-6 p-6 md:p-12 items-center justify-center gap-6 ">
+            <div>
+              <Title order={1} mb="lg">{proyek.title}</Title>
+              <Text mb="lg">{proyek.description}</Text>
+            </div>
+            <Image 
+              src={proyek.image?.formats?.medium?.url || proyek.image.url} 
+              alt={proyek.image?.alternativeText || proyek.title}
+              radius="md"
+              h={250}
+              w={350}
             />
-          ))}
-        </SimpleGrid>
-      )}
-      <Space h="xl" />
-      <Space h="xl" />
-    </Container>
+          </div>
+        )}
+        
+        <Center>
+          <Title order={1} m="lg">Latest Project</Title>
+        </Center>
+
+        {articles.length === 0 ? (
+          <Center style={{ height: '200px' }}>
+            <Text size="lg" c="dimmed">No articles found.</Text>
+          </Center>
+        ) : (
+          <SimpleGrid
+            cols={{ base: 1, sm: 2, md: 3 }}
+            spacing="lg"
+            verticalSpacing="xl"
+          >
+            {articles.map((article) => (
+              <Card 
+                shadow="sm" 
+                padding="lg" 
+                radius="md" 
+                withBorder 
+                component="a"
+                href={`/project/${article.slug}`}
+                target="_blank"
+                key={article.id}
+                >
+                <Card.Section>
+                  <Image
+                    src={article.coverUrl}
+                    alt={article.title}
+                    radius="md"
+                    loading="lazy"
+                    className='rounded-md h-56 w-full object-cover'
+                  />
+                </Card.Section>
+                <Group justify="space-between" mt="md" mb="xs">
+                  <Text fw={500}>{article.title}</Text>
+                  <Badge color="#007BFF" variant="light" radius="sm">
+                    {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('id-ID') : 'N/A'}
+                  </Badge>
+                </Group>
+                <Text size="sm" c="dimmed">
+                  {article.description}
+                </Text>
+                <Button variant="transparent" color="blue" fullWidth mt="md" radius="md" rightSection={<IconChevronRight size={14} />}>
+                  Baca Selengkapnya
+                </Button>
+              </Card>
+            ))}
+          </SimpleGrid>
+        )}
+      </Container>
+
+      <Footer />
+
+      <WhatsappButton />
+    </>
   );
 }

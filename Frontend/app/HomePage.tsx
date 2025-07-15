@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { IconAddressBook } from '@tabler/icons-react';
+import { IconComponents, IconBuildingSkyscraper } from '@tabler/icons-react';
 import { useInView } from 'react-intersection-observer';
 import { Button, Container } from '@mantine/core';
 import { fetchFromStrapi } from '../lib/api';
@@ -64,7 +64,7 @@ export default function HomePage() {
           <h1>{hero.Title}</h1>
           <p>{hero.Description}</p>
           <div className="heroButtons">
-            <Button component="a" href="/services" variant="filled" color="#007BFF">
+            <Button component="a" href="/about" variant="filled" color="#007BFF" leftSection={<IconBuildingSkyscraper size={14} />}>
               About Us
             </Button>
             <Button
@@ -72,14 +72,10 @@ export default function HomePage() {
               href="/projects"
               variant="outline"
               color="#007BFF"
-              rightSection={<IconAddressBook size={14} />}
+              rightSection={<IconComponents size={14} />}
               style={{ backdropFilter: 'blur(5px)' }}
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-              }}
             >
-              Contact Us
+              Our Projects
             </Button>
           </div>
         </div>
