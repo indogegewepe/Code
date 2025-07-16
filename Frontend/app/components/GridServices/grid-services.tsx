@@ -1,57 +1,48 @@
 'use client';
 
-import {
-  IconAffiliateFilled,
-  IconDeviceCctvFilled,
-  IconMap,
-  IconPlugConnected,
-  IconWifi,
-} from '@tabler/icons-react';
+import DynamicsIcon from '@/app/components/DynamicsTablerIcon/DynamicsIcon';
 import { Container, Title } from '@mantine/core';
 import { GlowingEffect } from '@/app/components/ui/glowing-effect';
+import { useEffect, useState } from 'react';
+import { fetchFromStrapi } from '@/lib/api';
+
+interface ServiceItem {
+  id: number;
+  Icon: string;
+  Title: string;
+  Description: string;
+}
 
 export default function GridServices() {
+  const [serviceItems, setServiceItems] = useState<ServiceItem[]>([]);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        const res = await fetchFromStrapi('/api/services');
+        setServiceItems(res.data);
+      } catch (error) {
+        console.error('Failed to fetch services:', error);
+      }
+    };
+
+    fetchService();
+  }, []);
+
   return (
     <Container fluid bg="#171717" className="rounded-md">
       <Container size="lg" className="heroContainerSec">
         <div id="services" className="heroContentSec py-24 scroll-mt-6">
           <Title className="text-center">Our Services</Title>
-          <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 lg:gap-6 xl:grid-rows-2">
-            <GridItem
-              icon={<IconWifi className="h-6 w-6 text-black dark:text-neutral-400" />}
-              title="Internet Network Distribution"
-              description="Designing and distributing high-performance internet networks for offices, buildings, and industrial complexes."
-            />
-
-            <GridItem
-              icon={<IconAffiliateFilled className="h-6 w-6 text-black dark:text-neutral-400" />}
-              title="Network System Design & Planning"
-              description="Designing and implementing robust network systems tailored to your business needs."
-            />
-
-            <GridItem
-              icon={<IconMap className="h-6 w-6 text-black dark:text-neutral-400" />}
-              title="On-site Setup & Configuration"
-              description="Professional onsite installation, configuration, and maintenance of network systems to ensure optimal performance."
-            />
-
-            <GridItem
-              icon={<IconDeviceCctvFilled className="h-6 w-6 text-black dark:text-neutral-400" />}
-              title="Fiber Optic Installation & Splicing"
-              description="Expert installation and splicing of fiber optic cables for high-speed data transmission."
-            />
-
-            <GridItem
-              icon={<IconPlugConnected className="h-6 w-6 text-black dark:text-neutral-400" />}
-              title="CCTV Network Installation"
-              description="Comprehensive CCTV network installation services for enhanced security and surveillance."
-            />
-            
-            <GridItem
-              icon={<IconPlugConnected className="h-6 w-6 text-black dark:text-neutral-400" />}
-              title="CCTV Network Installation"
-              description="Comprehensive CCTV network installation services for enhanced security and surveillance."
-            />
+          <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 lg:gap-6">
+            {serviceItems.map((item) => (
+              <GridItem
+                key={item.id}
+                icon={<DynamicsIcon iconName={item.Icon} />}
+                title={item.Title}
+                description={item.Description}
+              />
+            ))}
           </ul>
         </div>
       </Container>
@@ -67,7 +58,7 @@ interface GridItemProps {
 
 const GridItem = ({ icon, title, description }: GridItemProps) => {
   return (
-    <li className={"min-h-[14rem] list-none"}>
+    <li className="min-h-[14rem] list-none">
       <div className="relative h-full rounded-2xl border p-2 md:rounded-3xl md:p-3">
         <GlowingEffect spread={50} glow disabled={false} proximity={64} inactiveZone={0.01} />
         <div className="border-0.75 relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl p-6 md:p-6 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">

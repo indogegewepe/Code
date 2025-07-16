@@ -1,6 +1,6 @@
 'use client';
 
-import { Accordion, Container, Grid, Image, Title, Text } from '@mantine/core';
+import { Accordion, Container, Grid, Image, Title } from '@mantine/core';
 import classes from './faq.module.css';
 import { fetchFromStrapi } from '@/lib/api';
 import { useEffect, useState } from 'react';

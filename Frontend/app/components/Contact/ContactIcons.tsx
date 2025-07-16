@@ -12,6 +12,7 @@ interface ContactIconProps extends Omit<React.ComponentPropsWithoutRef<'div'>, '
   icon: typeof IconSun;
   title: React.ReactNode;
   description: React.ReactNode;
+  href: string | null; // href can now be null
 }
 
 function ContactIcon({ icon: Icon, title, description, ...others }: ContactIconProps) {
@@ -20,12 +21,22 @@ function ContactIcon({ icon: Icon, title, description, ...others }: ContactIconP
       <Box mr="md">
         <Icon size={24} />
       </Box>
-      <div>
-        <Text size="xs" className={classes.title}>
-          {title}
-        </Text>
-        <Text className={classes.description}>{description}</Text>
-      </div>
+      {/* Conditionally render <a> tag only if href exists */}
+      {others.href ? (
+        <a href={others.href} className={classes.link}>
+          <Text size="xs" className={classes.title}>
+            {title}
+          </Text>
+          <Text className={classes.description}>{description}</Text>
+        </a>
+      ) : (
+        <Box> {/* Use Box or a similar container if no link is needed */}
+          <Text size="xs" className={classes.title}>
+            {title}
+          </Text>
+          <Text>{description}</Text>
+        </Box>
+      )}
     </div>
   );
 }
@@ -53,21 +64,26 @@ export function ContactIconsList() {
       title: 'Email',
       description: contact.Email,
       icon: IconAt,
+      href: `mailto:${contact.Email}`,
     },
     {
       title: 'Phone',
       description: `+62 ${contact.Phone}`,
       icon: IconPhone,
+      href: `tel:+62${contact.Phone}`,
     },
     {
       title: 'Address',
       description: contact.Location,
       icon: IconMapPin,
+      // Corrected line for Google Maps URL
+      href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.Location)}`,
     },
     {
       title: 'Working hours',
       description: `${formatTime(contact.WorkingStart)} AM – ${formatTime(contact.WorkingEnd)} PM`,
       icon: IconSun,
+      href: null, // No direct link for working hours, as it's just text
     },
   ];
 

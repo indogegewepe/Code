@@ -16,3 +16,9 @@
 .description {
   color: var(--mantine-color-white);
 }
+
+.description:hover {
+  color: #007BFF;
+  transform: scale(1.05);
+  transition: 100ms ease-in-out;
+}
