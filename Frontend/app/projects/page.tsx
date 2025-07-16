@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
-import { Container, Title, Image, Text, Center, Alert } from '@mantine/core'; // Import SimpleGrid for layout
+import { Container, Title, Image, Text, Center, Alert } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
 import { Loader } from './loader';
@@ -29,9 +29,7 @@ interface ProyekItem {
   };
 }
 
-// Renamed component to reflect its purpose: displaying multiple projects
 export default function ProyekPage() {
-  // State now holds an array of ProyekItem
   const [proyekItems, setProyekItems] = useState<ProyekItem[]>([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
