@@ -9,12 +9,9 @@ const data = [
   {
     title: 'Quick Links',
     links: [
-      { link: '#home', label: 'Home' },
-      { link: '#services', label: 'Services' },
-      { link: '#projects', label: 'Projects' },
-      { link: '#partners', label: 'Partners' },
-      { link: '#faq', label: 'FAQ' },
-      { link: '#contact', label: 'Contact Us' },
+      { link: '/', label: 'Home' },
+      { link: '/projects', label: 'All Projects' },
+      { link: '/about', label: 'About Us' },
     ],
   },
   {
@@ -45,14 +42,6 @@ export default function Footer() {
         className={classes.link}
         component="a"
         href={link.link}
-        onClick={(event) => {
-          event.preventDefault();
-
-          const target = document.querySelector(link.link);
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        }}
       >
         {link.label}
       </Text>

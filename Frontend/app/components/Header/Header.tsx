@@ -35,12 +35,11 @@ export default function Header() {
         }
       },
       {
-        rootMargin: '0px 0px -80% 0px', // Elemen dianggap terlihat jika bagian atasnya menyentuh 40% viewport dari atas
-        threshold: 0.1, // Hanya perlu 10% elemen terlihat
+        rootMargin: '0px 0px -80% 0px',
+        threshold: 0.1,
       }
     );
 
-    // Observe all sections with ids matching the links
     links.forEach((link) => {
       const section = document.querySelector(link.link);
       if (section) {

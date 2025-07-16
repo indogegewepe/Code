@@ -8,8 +8,8 @@ import { fetchFromStrapi } from '@/lib/api';
 import { Loader } from './loader';
 import ArticlesContent from './content';
 
-const Header = dynamic(() => import('@/app/components/Header/Header'));
-const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
+const Header = dynamic(() => import('@/app/components/NavProject/Header'));
+const Footer = dynamic(() => import('@/app/components/NavProject/Footer'));
 const WhatsappButton = dynamic(() => import('@/app/components/Whatsapp/whatsapp'));
 
 // Interface for a single project item

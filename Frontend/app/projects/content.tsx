@@ -286,7 +286,6 @@ export default function ArticlesContent() {
                   withBorder
                   component="a"
                   href={`/project/${article.slug}`}
-                  target="_blank"
                   key={article.id}
                 >
                   <Card.Section>

@@ -5,7 +5,7 @@ import { Image, Text, Title, Container, Badge } from '@mantine/core';
 import React from 'react';
 import Markdown from 'react-markdown';
 
-const Header = dynamic(() => import('@/app/components/Header/Header'));
+const Header = dynamic(() => import('@/app/components/NavProject/Header'));
 const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
 const WhatsappButton = dynamic(() => import('@/app/components/Whatsapp/whatsapp'));
 
