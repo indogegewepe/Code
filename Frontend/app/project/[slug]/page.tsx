@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import { fetchFromStrapi } from '@/lib/api';
-import { Image, Text, Title, Container, Badge, Center } from '@mantine/core';
+import { Image, Text, Title, Container, Badge } from '@mantine/core';
 import React from 'react';
 import Markdown from 'react-markdown';
 

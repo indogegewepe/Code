@@ -26,6 +26,37 @@
     },
     "TotalProyek": {
       "type": "integer"
+    },
+    "Jangkauan": {
+      "type": "integer"
+    },
+    "Kepuasan": {
+      "type": "integer"
+    },
+    "misis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::misi.misi"
+    },
+    "our_teams": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::our-team.our-team"
+    },
+    "why_uses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::why-us.why-us"
+    },
+    "Logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }

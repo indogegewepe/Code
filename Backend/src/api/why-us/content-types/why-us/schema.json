@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "why_uses",
+  "info": {
+    "singularName": "why-us",
+    "pluralName": "why-uses",
+    "displayName": "WhyUs"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Icon": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

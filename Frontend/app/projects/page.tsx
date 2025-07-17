@@ -89,7 +89,6 @@ export default function ProyekPage() {
           image: imageData,
         };
 
-        // Simpan dalam array agar layout grid tetap jalan
         setProyekItems([proyek]);
       } catch (err) {
         console.error('Failed to load projects content:', err);
@@ -126,7 +125,6 @@ export default function ProyekPage() {
         
         {proyekItems.map((proyek) => (
           <Card shadow="sm"
-              padding="lg"
               radius="md"
               withBorder 
               style={{

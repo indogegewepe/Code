@@ -390,9 +390,14 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     Description: Schema.Attribute.Text;
     DescriptionUs: Schema.Attribute.Text;
+    Jangkauan: Schema.Attribute.Integer;
+    Kepuasan: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::about.about'> &
       Schema.Attribute.Private;
+    Logo: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    misis: Schema.Attribute.Relation<'oneToMany', 'api::misi.misi'>;
+    our_teams: Schema.Attribute.Relation<'oneToMany', 'api::our-team.our-team'>;
     publishedAt: Schema.Attribute.DateTime;
     Sejak: Schema.Attribute.Integer;
     Title: Schema.Attribute.String;
@@ -400,6 +405,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    why_uses: Schema.Attribute.Relation<'oneToMany', 'api::why-us.why-us'>;
   };
 }
 
@@ -624,6 +630,63 @@ export interface ApiHeroHero extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMisiMisi extends Struct.CollectionTypeSchema {
+  collectionName: 'misis';
+  info: {
+    displayName: 'Misi';
+    pluralName: 'misis';
+    singularName: 'misi';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Text;
+    Icon: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::misi.misi'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiOurTeamOurTeam extends Struct.CollectionTypeSchema {
+  collectionName: 'our_teams';
+  info: {
+    displayName: 'OurTeam';
+    pluralName: 'our-teams';
+    singularName: 'our-team';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Jobdesk: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::our-team.our-team'
+    > &
+      Schema.Attribute.Private;
+    Motto: Schema.Attribute.Text;
+    Name: Schema.Attribute.String;
+    Profile: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPartnerPartner extends Struct.CollectionTypeSchema {
   collectionName: 'partners';
   info: {
@@ -768,6 +831,35 @@ export interface ApiWhatsAppWhatsApp extends Struct.SingleTypeSchema {
       'oneToMany',
       'api::text-whats-app.text-whats-app'
     >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiWhyUsWhyUs extends Struct.CollectionTypeSchema {
+  collectionName: 'why_uses';
+  info: {
+    displayName: 'WhyUs';
+    pluralName: 'why-uses';
+    singularName: 'why-us';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Text;
+    Icon: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::why-us.why-us'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1291,11 +1383,14 @@ declare module '@strapi/strapi' {
       'api::faq.faq': ApiFaqFaq;
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;
+      'api::misi.misi': ApiMisiMisi;
+      'api::our-team.our-team': ApiOurTeamOurTeam;
       'api::partner.partner': ApiPartnerPartner;
       'api::service.service': ApiServiceService;
       'api::text-whats-app.text-whats-app': ApiTextWhatsAppTextWhatsApp;
       'api::title-proyek.title-proyek': ApiTitleProyekTitleProyek;
       'api::whats-app.whats-app': ApiWhatsAppWhatsApp;
+      'api::why-us.why-us': ApiWhyUsWhyUs;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

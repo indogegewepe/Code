@@ -22,7 +22,7 @@ export default function Project() {
     const fetchData = async () => {
       try {
         const response = await fetchFromStrapi('/api/articles?populate=*');
-        const items = response.data.map((item: any) => ({ // <-- Added parentheses here
+        const items = response.data.map((item: any) => ({
           id: item.id,
           title: item.title,
           description: item.description,
@@ -58,7 +58,7 @@ export default function Project() {
                   <Image
                     src={item.coverUrl}
                     alt={item.title}
-                    className="object-cover rounded-xl"
+                    className="object-cover"
                     h={150}
                     radius="md"
                     loading="lazy"
