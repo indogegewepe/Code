@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic';
 import { fetchFromStrapi } from '@/lib/api';
-import { notFound } from 'next/navigation';
-import { Image, Text, Title, Container, Badge } from '@mantine/core';
+import { Image, Text, Title, Container, Badge, Center } from '@mantine/core';
 import React from 'react';
 import Markdown from 'react-markdown';
 
@@ -43,9 +42,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
     if (response && Array.isArray(response.data) && response.data.length > 0) {
       article = response.data[0];
-    } else {
-      notFound();
-    }
+    } 
   } catch (err: any) {
     console.error('Error fetching article by slug:', err);
     error = `Failed to load article: ${err.message || 'Unknown error'}`;
@@ -62,13 +59,13 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
   if (!article) {
     return (
-      <Container size="md" py="xl">
+      <Container h="100vh" fluid className='content-center'>
+        <Title order={1} className="text-center" c='red'>404!</Title>
         <Title order={1} className="text-center">Article not found</Title>
       </Container>
     );
   }
 
-  // FIX 3: Ensure template literal for coverUrl is fully enclosed in backticks
   const coverUrl = article.cover?.url
     ? `${STRAPI_BASE_URL}${article.cover.url}`
     : '/assets/img/placeholder.webp';

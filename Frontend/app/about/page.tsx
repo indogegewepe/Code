@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from 'next/dynamic';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchFromStrapi } from '@/lib/api';
-import { Loader } from './loader';
+import Loader from './loader';
 import { Container, Title, Image, Text, Center, Alert } from '@mantine/core';
 import DynamicsIcon from '@/app/components/DynamicsTablerIcon/DynamicsIcon';
 

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
-import { Container, Title, Image, Text, Center, Alert, Card } from '@mantine/core';
+import { Container, Title, Text, Alert, Card } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
 import { Loader } from './loader';
