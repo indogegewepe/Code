@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import { Burger, Container, Group } from '@mantine/core';
+import Link from 'next/link';
+import { Burger, Container, Group, Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import LogoAndita from '@/public/assets/img/logo-andita.png';
 import classes from './Header.module.css';
 
 const ActionToggle = dynamic(() =>
@@ -75,13 +74,16 @@ export default function Header() {
   return (
     <header className={classes.header}>
       <Container size="lg" className={classes.inner}>
-        <Image
-          src={LogoAndita}
-          alt="Andita Logo"
-          height={46}
-          style={{ filter: 'saturate(1.5) brightness(1.5)' }}
-          loading="lazy"
-        />
+        <Link href="/" className="inline-block">
+          <Image
+            src="/assets/img/logo-andita.png"
+            alt="Andita Logo"
+            w='auto'
+            h={42}
+            style={{ objectFit: 'contain', filter: 'saturate(1.5) brightness(1.5)' }}
+            loading="lazy"
+          />
+        </Link>
         <Group gap={5} visibleFrom="sm">
           {items}
           <ActionToggle />

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react';
-import { Container, Title, Image, Text, Center, Alert } from '@mantine/core';
+import { Container, Title, Image, Text, Center, Alert, Card } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
 import { Loader } from './loader';
@@ -123,35 +123,32 @@ export default function ProyekPage() {
       </nav>
 
       <Container size="lg" className='pt-20'>
+        
         {proyekItems.map((proyek) => (
+          <Card shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder 
+              style={{
+                backgroundImage: `url(${proyek.image.url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundBlendMode: 'darken',
+                backgroundColor: 'light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6))',
+              }}
+              className="rounded-md p-6 text-white flex flex-col items-center justify-center gap-6 bg-no-repeat w-full shadow-md"
+              >
             <div 
               key={proyek.id} 
-              className="bg-blue-500 rounded-md p-6 text-white grid grid-flow-row md:grid-flow-col items-center gap-6"
+              className="rounded-md p-6 text-white flex flex-col items-center gap-6"
             >
-              <div>
-                <Title order={3} my="sm">{proyek.title}</Title>
-                <Text my="md" lineClamp={3}>{proyek.description}</Text>
-              </div>
-              {proyek.image.url ? ( 
-                <Image 
-                  src={proyek.image.formats?.medium?.url || proyek.image.formats?.large?.url || proyek.image.url} 
-                  alt={proyek.image.alternativeText || proyek.title}
-                  radius="md"
-                  h={200}
-                  fit="cover"
-                />
-              ) : (
-                <Center style={{ height: 200, width: '100%', border: '1px dashed #ccc', borderRadius: '8px' }}>
-                  <Text size="sm" c="dimmed">No image available</Text>
-                </Center>
-              )}
+                <Title order={1}>{proyek.title}</Title>
+                <Text lineClamp={3}>{proyek.description}</Text>
             </div>
-          ))
+        </Card>
+        ))
         }
-
-        <Center m="lg">
-          <Title order={1}>Latest Projects</Title>
-        </Center>
 
         <ArticlesContent />
       </Container>

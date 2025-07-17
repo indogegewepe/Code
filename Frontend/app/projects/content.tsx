@@ -19,6 +19,7 @@ import { fetchFromStrapi } from '@/lib/api';
 import { LoaderNews } from './loader';
 import { DatePickerInput } from '@mantine/dates';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { IconChevronRight } from '@tabler/icons-react';
 
 interface ArticleItem {
     id: number;
@@ -298,7 +299,7 @@ export default function ArticlesContent() {
                     />
                   </Card.Section>
                   <Group justify="space-between" mt="md" mb="xs">
-                    <Badge color="#007BFF" variant="light" radius="sm">
+                    <Badge variant="light" radius="sm">
                       {article.publishedAt
                         ? new Date(article.publishedAt).toLocaleDateString('id-ID')
                         : 'N/A'}
@@ -310,7 +311,7 @@ export default function ArticlesContent() {
                   <Text size="sm" c="dimmed" truncate="end">
                     {article.description}
                   </Text>
-                  <Button variant="transparent" color="blue" fullWidth mt="md" radius="md">
+                  <Button variant="transparent" color="blue" fullWidth mt="md" radius="md" rightSection={<IconChevronRight size={14} />}>
                     Baca Selengkapnya
                   </Button>
                 </Card>

@@ -1,10 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Container, Group, Burger } from '@mantine/core';
-import LogoAndita from '@/public/assets/img/logo-andita.png';
+import { Container, Group, Burger, Image } from '@mantine/core';
 import classes from './Header.module.css';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -34,13 +32,16 @@ export default function Header() {
   return (
     <header className={classes.header}>
       <Container size="lg" className={classes.inner}>
-        <Image
-          src={LogoAndita}
-          alt="Andita Logo"
-          height={46}
-          style={{ filter: 'saturate(1.5) brightness(1.5)' }}
-          loading="lazy"
-        />
+        <Link href="/" className="inline-block">
+          <Image
+            src="/assets/img/logo-andita.png"
+            alt="Andita Logo"
+            w='auto'
+            h={42}
+            style={{ objectFit: 'contain', filter: 'saturate(1.5) brightness(1.5)' }}
+            loading="lazy"
+          />
+        </Link>
         <Group gap={5} visibleFrom="sm">
           {items}
           <ActionToggle />
