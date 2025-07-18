@@ -29,11 +29,15 @@ type ArticleData = {
   }[] | null;
 };
 
+interface ProjectDetailPageProps {
+  params: { slug: string };
+  // Include searchParams, as it's part of the standard PageProps structure
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
 export default async function ProjectDetailPage({
-    params,
-  }: {
-    params: { slug: string };
-  }) {
+  params,
+}: ProjectDetailPageProps) {
   const { slug } = params;
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
