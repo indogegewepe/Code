@@ -14,12 +14,11 @@ import {
   Select,
   TextInput,
 } from '@mantine/core';
-import { IconRestore } from '@tabler/icons-react';
+import { IconRestore, IconChevronRight } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
 import { LoaderNews } from './loader';
 import { DatePickerInput } from '@mantine/dates';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { IconChevronRight } from '@tabler/icons-react';
 
 interface ArticleItem {
     id: number;
@@ -59,8 +58,8 @@ export default function ArticlesContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedAuthor, setSelectedAuthor] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date | any>(null);
+  const [endDate, setEndDate] = useState<Date | any>(null);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [availableAuthors, setAvailableAuthors] = useState<string[]>([]);
   const [page, setPage] = useState(1);
@@ -146,7 +145,6 @@ export default function ArticlesContent() {
             articlesRes.meta.pagination.total
         );
       } catch (err) {
-        console.error('Failed to load initial content:', err);
         setError('Failed to load content. Please try again later.');
       } finally {
         setLoading(false);
@@ -156,7 +154,7 @@ export default function ArticlesContent() {
   }, [selectedCategory, searchQuery, selectedAuthor, startDate, endDate, buildQueryParams]);
 
   const fetchMoreData = async () => {
-    if (!hasMore) return;
+    if (!hasMore) { return };
     try {
       const nextPage = page + 1;
       const queryParams = buildQueryParams(nextPage);
@@ -170,8 +168,8 @@ export default function ArticlesContent() {
       setPage(nextPage);
       setHasMore(nextPage * articlesRes.meta.pagination.pageSize < articlesRes.meta.pagination.total);
       setTotalArticles(articlesRes.meta.pagination.total);
-    } catch (error) {
-      console.error('Error fetching more articles:', error);
+    } catch (err) {
+      setError('Failed to load article Unknown error');
     }
   };
 

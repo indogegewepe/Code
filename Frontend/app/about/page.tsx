@@ -34,6 +34,7 @@ type AboutData = {
   }[];
   Logo: {
     url: string;
+    alternativeText: string;
     formats: {
       thumbnail: { url: string };
       small: { url: string };
@@ -41,11 +42,6 @@ type AboutData = {
       large: { url: string };
     };
   };
-};
-
-type AboutResponse = {
-  data: AboutData;
-  meta: any;
 };
 
 type TeamMember = {
@@ -64,9 +60,9 @@ type TeamMember = {
 };
 
 export default function About() {
-    const [aboutItem, setAboutItem] = useState<AboutResponse | null>(null);
+    const [aboutItem, setAboutItem] = useState<AboutData | null>(null);
     const [ourTeams, setOurTeams] = useState<TeamMember[]>([]);
-    const [contact, setContact] = useState<string | null>(null);
+    const [contact, setContact] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const YearNow = new Date().getFullYear();
@@ -380,7 +376,17 @@ export default function About() {
                     >
                         <Title c="#fff" ta="center">Siap membangun bersama kami?</Title>
                         <Text c="#fff" ta="center">Hubungi tim kami dan rasakan perbedaan layanan profesional serta kualitas koneksi terbaik di Indonesia.</Text>
-                        <Button variant="white" size="xl" radius="xl" color="#007BFF" component={Link} href={`tel:+62${contact.Phone}`}>Hubungi Kami</Button>
+                        <Button
+                            variant="white"
+                            size="xl"
+                            radius="xl"
+                            color="#007BFF"
+                            component={Link}
+                            // Use optional chaining here
+                            href={`tel:+62${contact?.Phone || ''}`}
+                            >
+                                Hubungi Kami
+                        </Button>
                     </Flex>
                 </Container>
             </Container>

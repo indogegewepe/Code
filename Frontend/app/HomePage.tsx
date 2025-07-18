@@ -50,7 +50,6 @@ export default function HomePage() {
           Description: data.data.Description,
         });
       })
-      .catch(console.error);
   }, []);
 
   return (

@@ -91,7 +91,6 @@ export default function ProyekPage() {
 
         setProyekItems([proyek]);
       } catch (err) {
-        console.error('Failed to load projects content:', err);
         setError('Failed to load Projects. Please try again later.');
       } finally {
         setLoading(false);

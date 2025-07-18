@@ -1,12 +1,23 @@
-import dynamic from 'next/dynamic';
-import { fetchFromStrapi } from '@/lib/api';
-import { Image, Text, Title, Container, Badge } from '@mantine/core';
-import React from 'react';
-import Markdown from 'react-markdown';
+'use client';
 
-const Header = dynamic(() => import('@/app/components/NavProject/Header'));
-const Footer = dynamic(() => import('@/app/components/Footer/Footer'));
-const WhatsappButton = dynamic(() => import('@/app/components/Whatsapp/whatsapp'));
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { Image, Text, Title, Container, Badge, Skeleton } from '@mantine/core';
+import Markdown from 'react-markdown';
+import { fetchFromStrapi } from '@/lib/api';
+import { useParams } from 'next/navigation';
+
+const Header = dynamic(() => import('@/app/components/NavProject/Header'), {
+  ssr: false,
+  loading: () => <Skeleton height={60} width="100%" />,
+});
+const Footer = dynamic(() => import('@/app/components/Footer/Footer'), {
+  ssr: false,
+  loading: () => <Skeleton height={200} width="100%" />,
+});
+const WhatsappButton = dynamic(() => import('@/app/components/Whatsapp/whatsapp'), {
+  ssr: false,
+});
 
 type ArticleData = {
   id: number;
@@ -29,23 +40,49 @@ type ArticleData = {
   }[] | null;
 };
 
-export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
+export default function ProjectDetailPage() {
+  const params = useParams();
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+  
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const [article, setArticle] = useState<ArticleData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const { slug } = params;
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchFromStrapi(`/api/articles?filters[slug][$eq]=${slug}&populate=*`);
 
-  let article: ArticleData | null = null;
-  let error: string | null = null;
+        if (response && Array.isArray(response.data) && response.data.length > 0) {
+          setArticle(response.data[0]);
+        } else {
+          setError('Article not found');
+        }
+      } catch (err: any) {
+        setError(`Failed to load article: ${err.message || 'Unknown error'}`);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  try {
-    const response = await fetchFromStrapi(`/api/articles?filters[slug][$eq]=${slug}&populate=*`);
+    if (slug) {
+      fetchArticle();
+    }
+  }, [slug]);
 
-    if (response && Array.isArray(response.data) && response.data.length > 0) {
-      article = response.data[0];
-    } 
-  } catch (err: any) {
-    console.error('Error fetching article by slug:', err);
-    error = `Failed to load article: ${err.message || 'Unknown error'}`;
+  if (loading) {
+    return (
+      <Container size="lg" mt={70}>
+        <Skeleton height={40} width="70%" mb="md" mx="auto" />
+        <Skeleton height={300} mb="md" />
+        <Skeleton height={20} width="30%" mb="sm" />
+        {[...Array(5)].map((_, i) => (
+          <Skeleton key={i} height={15} mt="md" width={i % 2 === 0 ? "90%" : "80%"} />
+        ))}
+      </Container>
+    );
   }
 
   if (error) {
@@ -76,6 +113,19 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
     year: 'numeric',
   });
 
+  const renderCategories = () => {
+    if (!article?.categories || article.categories.length === 0) {
+      return <span>Tidak ada kategori</span>;
+    }
+
+    return article.categories.map((cat, index) => (
+      <span key={cat.name}>
+        {cat.name}
+        {index < article.categories!.length - 1 ? ', ' : ''}
+      </span>
+    ));
+  };
+
   return (
     <>
       <nav className="header">
@@ -90,20 +140,11 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
         <Text size="sm" c="dimmed" mb="sm">
           Published: <Badge variant="light" radius="sm">{publishedDate}</Badge>
           {article.author && <span> by {article.author.name} </span>}
-          {article.categories && <span> 
-          {article.categories && article.categories.length > 0 ? (
+          {article.categories && (
             <span>
-              in{' '}
-              {article.categories.map((cat, index) => (
-                <span key={cat.name}>
-                  {cat.name}
-                  {index < article.categories.length - 1 ? ', ' : ''}
-                </span>
-              ))}
+              in {renderCategories()}
             </span>
-          ) : (
-            <span>Tidak ada kategori</span>
-          )}</span>}
+          )}
         </Text>
         <Markdown
           components={{
@@ -123,7 +164,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
               <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
             ),
             img: ({ node, ...props }) => (
-              <img className="rounded my-4 max-w-full h-auto" {...props} />
+              <img className="rounded my-4 max-w-full h-auto" alt={props.alt || ''} {...props} />
             ),
             code: ({ node, ...props }) => (
               <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm font-mono" {...props} />

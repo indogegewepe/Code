@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { Container, Image, Title } from '@mantine/core';
 import { fetchFromStrapi } from '@/lib/api';
 
-const PARTNER_ITEM_WIDTH = 'auto';
-
 interface PartnerItem {
   id: number;
   documentId: string;
@@ -54,20 +52,20 @@ export default function Partners() {
     const scrollerElement = scrollerRef.current;
     if (!scrollerElement || partners.length === 0) return;
 
-    const totalOriginalWidth = partners.length * (PARTNER_ITEM_WIDTH);
+    const totalOriginalWidth = partners.length;
 
     if (scrollerElement.scrollLeft >= totalOriginalWidth) {
       scrollerElement.style.scrollBehavior = 'auto';
-      scrollerElement.scrollLeft = scrollerElement.scrollLeft - totalOriginalWidth;
+      scrollerElement.scrollLeft -= totalOriginalWidth;
       requestAnimationFrame(() => {
         if (scrollerElement) {
           scrollerElement.style.scrollBehavior = 'smooth';
         }
       });
     }
-    else if (scrollerElement.scrollLeft <= 0 && partners.length > 0) { // Added check for partners.length
-      scrollerElement.style.scrollBehavior = 'auto'; // Temporarily disable smooth scroll
-      scrollerElement.scrollLeft = scrollerElement.scrollLeft + totalOriginalWidth; // Jump forward
+    else if (scrollerElement.scrollLeft <= 0 && partners.length > 0) {
+      scrollerElement.style.scrollBehavior = 'auto';
+      scrollerElement.scrollLeft += totalOriginalWidth;
       requestAnimationFrame(() => {
         if (scrollerElement) {
           scrollerElement.style.scrollBehavior = 'smooth';
@@ -131,8 +129,8 @@ export default function Partners() {
               {duplicatedPartners.map((partner, index) => (
                 <div
                   key={`${partner.id}-${index}`}
-                  className="flex-shrink-0 scroll-snap-start media-element justify-center items-center" // Add media-element for CSS
-                  style={{ width: PARTNER_ITEM_WIDTH, justifyContent: "center" }}
+                  className="flex-shrink-0 scroll-snap-start media-element justify-center items-center"
+                  style={{ width: 'auto', justifyContent: "center" }}
 
                 >
                   <Image
