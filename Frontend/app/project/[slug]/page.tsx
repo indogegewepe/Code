@@ -1,3 +1,5 @@
+// app/project/[slug]/page.tsx
+
 import dynamic from 'next/dynamic';
 import { fetchFromStrapi } from '@/lib/api';
 import { Image, Text, Title, Container, Badge } from '@mantine/core';
@@ -29,16 +31,12 @@ type ArticleData = {
   }[] | null;
 };
 
-interface ProjectDetailPageProps {
-  params: { slug: string };
-  // Include searchParams, as it's part of the standard PageProps structure
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
 export default async function ProjectDetailPage({
   params,
-}: ProjectDetailPageProps) {
-  const { slug } = params;
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = params as { slug: string }; 
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   let article: ArticleData | null = null;
@@ -49,7 +47,7 @@ export default async function ProjectDetailPage({
 
     if (response && Array.isArray(response.data) && response.data.length > 0) {
       article = response.data[0];
-    } 
+    }
   } catch (err: any) {
     console.error('Error fetching article by slug:', err);
     error = `Failed to load article: ${err.message || 'Unknown error'}`;
@@ -97,7 +95,7 @@ export default async function ProjectDetailPage({
         <Text size="sm" c="dimmed" mb="sm">
           Published: <Badge variant="light" radius="sm">{publishedDate}</Badge>
           {article.author && <span> by {article.author.name} </span>}
-          {article.categories && <span> 
+          {article.categories && <span>
           {article.categories && article.categories.length > 0 ? (
             <span>
               in{' '}
