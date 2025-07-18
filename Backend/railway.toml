@@ -1,7 +1,7 @@
 [build]
 builder = "nixpacks"
-buildCommand = "echo building!"
+buildCommand = "strapi build"
 
 [deploy]
-startCommand = "echo starting!"
+startCommand = "strapi start"
 restartPolicyType = "never"
