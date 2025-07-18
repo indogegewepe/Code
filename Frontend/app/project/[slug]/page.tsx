@@ -29,12 +29,6 @@ type ArticleData = {
   }[] | null;
 };
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
-
 export default async function ProjectDetailPage({
     params,
   }: {
