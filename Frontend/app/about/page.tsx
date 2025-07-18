@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import { fetchFromStrapi } from '@/lib/api';
 import Loader from './loader';
-import { Container, Title, Image, Text, Center, Alert, Flex } from '@mantine/core';
+import { Container, Title, Image, Text, Center, Alert, Flex, Box } from '@mantine/core';
 import DynamicsIcon from '@/app/components/DynamicsTablerIcon/DynamicsIcon';
 
 const Header = dynamic(() => import('@/app/components/NavProject/Header'));
@@ -56,6 +56,7 @@ export default function About() {
     const [aboutItem, setAboutItem] = useState<AboutResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const YearNow = new Date().getFullYear();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -115,7 +116,7 @@ export default function About() {
                     justify="center"
                     align="center"
                     direction={{ base: 'column', md: 'row-reverse' }}
-                    className="p-6 myCard rounded-xl border border-neutral-200 hover:shadow-xl dark:border-white/[0.2]"
+                    className="p-6 myCard rounded-xl"
                 >
                     {aboutItem.Logo && aboutItem.Logo.url ? (
                         <Image
@@ -133,21 +134,81 @@ export default function About() {
                         </Center>
                     )}
                     <div>
-                        <Title order={1} my="sm" c="blue">Tentang Kami</Title>
+                        <Title order={1} my="sm" c="#007BFF">Tentang Kami</Title>
                         <Title order={3} my="sm">{aboutItem.Title}</Title>
                         <Text my="md" lineClamp={3}>{aboutItem.Description}</Text>
                     </div>
                 </Flex>
-                <div className="mt-8">
-                    <Title order={4}>Misi Kami</Title>
-                    {aboutItem.misis.map((misi) => (
-                        <div key={misi.id}>
-                            <DynamicsIcon iconName={misi.Icon as any} />
-                            <Text>{misi.Description}</Text>
-                        </div>
-                    ))}
-                </div>
             </Container>
+
+            <Container size="lg" py={24}>
+                <Flex
+                    gap="md"
+                    justify="center"
+                    align="center"
+                    direction={{ base: 'column', md: 'row' }}
+                    className="p-6 myCard rounded-xl"
+                >
+                    <div className='lg:w-1/2'>
+                        <Title order={1} my="sm" c="#007BFF">Siapa Kami?</Title>
+                        <Title order={3} my="sm">{aboutItem.Title}</Title>
+                        <Text my="md">{aboutItem.DescriptionUs}</Text>
+                    </div>
+                    <Center className='lg:w-1/2 gap-4 w-full flex flex-col'>
+                        <Flex
+                            justify="center"
+                            align="center"
+                            direction="row"
+                            className="w-full"
+                            gap="md"
+                        >
+                            <Flex
+                                justify="center"
+                                align="center"
+                                direction="column"
+                            >
+                                <Title order={3} my="sm" c="#007BFF">{aboutItem.Sejak}</Title>
+                                <Text size="sm" c="dimmed">Didirikan</Text>
+                            </Flex>
+                            <Box
+                                w="50%"
+                                h={4}
+                                bg="#007BFF"
+                                style={{ borderRadius: "100px" }}
+                            />
+                            <Flex
+                                justify="center"
+                                align="center"
+                                direction="column"
+                            >
+                                <Title order={3} my="sm" c="#007BFF">{YearNow}</Title>
+                                <Text size="sm" c="dimmed" style={{ whiteSpace: 'nowrap' }}>{aboutItem.TotalProyek}+ Proyek</Text>
+                            </Flex>
+                        </Flex>
+                        <div>
+                            <Flex
+                                justify="center"
+                                align="center"
+                                direction="row"
+                                gap="md"
+                            >
+                                <DynamicsIcon iconName="IconWorldStar"/>
+                                <Text size="sm">Menjadi mitra berbagai institusi & bisnis nasional</Text>
+                            </Flex>
+                        </div>
+                    </Center>
+                </Flex>
+            </Container>
+
+            {/* <div className="mt-8">
+                <Title order={4}>Misi Kami</Title>
+                {aboutItem.misis.map((misi) => (
+                    <div key={misi.id}>
+                        <DynamicsIcon iconName={misi.Icon as any} />
+                        <Text>{misi.Description}</Text>
+                    </div>
+                ))}
+            </div> */}
 
             <Footer />
             <WhatsappButton />

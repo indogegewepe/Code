@@ -122,7 +122,6 @@ export default function ProyekPage() {
       </nav>
 
       <Container size="lg" className='pt-20'>
-        
         {proyekItems.map((proyek) => (
           <Card shadow="sm"
               radius="md"
@@ -136,9 +135,9 @@ export default function ProyekPage() {
                 backgroundColor: 'light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6))',
               }}
               className="rounded-md p-6 text-white flex flex-col items-center justify-center gap-6 bg-no-repeat w-full shadow-md"
-              >
-            <div 
               key={proyek.id} 
+              >
+            <div
               className="rounded-md p-6 text-white flex flex-col items-center gap-6"
             >
                 <Title order={1}>{proyek.title}</Title>
