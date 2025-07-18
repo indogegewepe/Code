@@ -29,11 +29,12 @@ type ArticleData = {
   }[] | null;
 };
 
-export default async function ProjectDetailPage({
-  params,
-}: {
+interface PageProps {
   params: { slug: string };
-}) {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default async function ProjectDetailPage({ params }: PageProps) {
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { slug } = params;
 
