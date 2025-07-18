@@ -52,27 +52,32 @@ export default function Partners() {
     const scrollerElement = scrollerRef.current;
     if (!scrollerElement || partners.length === 0) return;
 
-    const totalOriginalWidth = partners.length;
+    const firstPartnerElement = scrollerElement.querySelector('.media-element');
+    const itemWidth = firstPartnerElement instanceof HTMLElement ? firstPartnerElement.offsetWidth : 0;
+
+    const totalOriginalWidth = partners.length * itemWidth;
+
+    if (totalOriginalWidth === 0) return;
 
     if (scrollerElement.scrollLeft >= totalOriginalWidth) {
-      scrollerElement.style.scrollBehavior = 'auto';
-      scrollerElement.scrollLeft -= totalOriginalWidth;
-      requestAnimationFrame(() => {
-        if (scrollerElement) {
-          scrollerElement.style.scrollBehavior = 'smooth';
-        }
-      });
+        scrollerElement.style.scrollBehavior = 'auto';
+        scrollerElement.scrollLeft -= totalOriginalWidth;
+        requestAnimationFrame(() => {
+            if (scrollerElement) {
+                scrollerElement.style.scrollBehavior = 'smooth';
+            }
+        });
     }
-    else if (scrollerElement.scrollLeft <= 0 && partners.length > 0) {
-      scrollerElement.style.scrollBehavior = 'auto';
-      scrollerElement.scrollLeft += totalOriginalWidth;
-      requestAnimationFrame(() => {
-        if (scrollerElement) {
-          scrollerElement.style.scrollBehavior = 'smooth';
-        }
-      });
+    else if (scrollerElement.scrollLeft <= 0) {
+        scrollerElement.style.scrollBehavior = 'auto';
+        scrollerElement.scrollLeft += totalOriginalWidth;
+        requestAnimationFrame(() => {
+            if (scrollerElement) {
+                scrollerElement.style.scrollBehavior = 'smooth';
+            }
+        });
     }
-  }, [partners]);
+}, [partners]);
 
   useEffect(() => {
     const scrollerElement = scrollerRef.current;
