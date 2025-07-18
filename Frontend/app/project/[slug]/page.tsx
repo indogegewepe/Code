@@ -29,9 +29,12 @@ type ArticleData = {
   }[] | null;
 };
 
-export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
   const { slug } = params;
 
   let article: ArticleData | null = null;
