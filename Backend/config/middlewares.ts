@@ -4,7 +4,7 @@ module.exports = [
     name: 'strapi::cors',
     config: {
       enabled: true,
-      origin: process.env.NEXT_PUBLIC_FRONTEND_URL ? process.env.NEXT_PUBLIC_FRONTEND_URL.split(',') : [],
+      origin: ['https://stagingandita.vercel.app'],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       credentials: true,
       headers: '*',
