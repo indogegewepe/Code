@@ -1,5 +1,3 @@
-// app/project/[slug]/page.tsx
-
 import dynamic from 'next/dynamic';
 import { fetchFromStrapi } from '@/lib/api';
 import { Image, Text, Title, Container, Badge } from '@mantine/core';
@@ -31,12 +29,19 @@ type ArticleData = {
   }[] | null;
 };
 
+// Define the exact type your page component expects
+// Use a different name than 'PageProps' or 'ProjectDetailPageProps'
+// to avoid any remaining conflicts.
+interface PageComponentProps {
+  params: { slug: string };
+  // Include searchParams for completeness, though it's often optional
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
 export default async function ProjectDetailPage({
   params,
-}: {
-  params: { slug: string };
-}) {
-  const { slug } = params as { slug: string }; 
+}: PageComponentProps) { // Use your specifically defined interface
+  const { slug } = params; // No need for 'as { slug: string }' here anymore if the interface works
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   let article: ArticleData | null = null;
