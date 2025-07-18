@@ -29,20 +29,10 @@ type ArticleData = {
   }[] | null;
 };
 
-// Define the exact type your page component expects
-// Use a different name than 'PageProps' or 'ProjectDetailPageProps'
-// to avoid any remaining conflicts.
-interface PageComponentProps {
-  params: { slug: string };
-  // Include searchParams for completeness, though it's often optional
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export default async function ProjectDetailPage({
-  params,
-}: PageComponentProps) { // Use your specifically defined interface
-  const { slug } = params; // No need for 'as { slug: string }' here anymore if the interface works
+export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
   const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  const { slug } = params;
 
   let article: ArticleData | null = null;
   let error: string | null = null;
@@ -52,7 +42,7 @@ export default async function ProjectDetailPage({
 
     if (response && Array.isArray(response.data) && response.data.length > 0) {
       article = response.data[0];
-    }
+    } 
   } catch (err: any) {
     console.error('Error fetching article by slug:', err);
     error = `Failed to load article: ${err.message || 'Unknown error'}`;
@@ -100,7 +90,7 @@ export default async function ProjectDetailPage({
         <Text size="sm" c="dimmed" mb="sm">
           Published: <Badge variant="light" radius="sm">{publishedDate}</Badge>
           {article.author && <span> by {article.author.name} </span>}
-          {article.categories && <span>
+          {article.categories && <span> 
           {article.categories && article.categories.length > 0 ? (
             <span>
               in{' '}
