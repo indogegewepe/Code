@@ -30,13 +30,18 @@ type ArticleData = {
 };
 
 interface PageProps {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: {
+    slug: string;
+  };
 }
 
-export default async function ProjectDetailPage({ params }: PageProps) {
-  const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+export default async function ProjectDetailPage({
+    params,
+  }: {
+    params: { slug: string };
+  }) {
   const { slug } = params;
+  const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   let article: ArticleData | null = null;
   let error: string | null = null;
