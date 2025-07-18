@@ -4,7 +4,8 @@ import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import { fetchFromStrapi } from '@/lib/api';
 import Loader from './loader';
-import { Container, Title, Image, Text, Center, Alert, Flex, Box } from '@mantine/core';
+import Link from 'next/link';
+import { Container, Title, Image, Text, Center, Alert, Flex, Box, SimpleGrid, Avatar, Button } from '@mantine/core';
 import DynamicsIcon from '@/app/components/DynamicsTablerIcon/DynamicsIcon';
 
 const Header = dynamic(() => import('@/app/components/NavProject/Header'));
@@ -20,16 +21,11 @@ type AboutData = {
   TotalProyek: number;
   Jangkauan: number;
   Kepuasan: number;
+  visi: string;
   misis: {
     id: number;
     Icon: string;
     Description: string;
-  }[];
-  our_teams: {
-    id: number;
-    Name: string;
-    Jobdesk: string;
-    Motto: string;
   }[];
   why_uses: {
     id: number;
@@ -52,8 +48,25 @@ type AboutResponse = {
   meta: any;
 };
 
+type TeamMember = {
+  id: number;
+  Name: string;
+  Jobdesk: string;
+  Motto: string;
+  Profile: {
+    url: string;
+    formats?: {
+      thumbnail?: {
+        url: string;
+      };
+    };
+  } | null;
+};
+
 export default function About() {
     const [aboutItem, setAboutItem] = useState<AboutResponse | null>(null);
+    const [ourTeams, setOurTeams] = useState<TeamMember[]>([]);
+    const [contact, setContact] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const YearNow = new Date().getFullYear();
@@ -61,15 +74,19 @@ export default function About() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res: AboutResponse = await fetchFromStrapi('/api/about?populate=*');
-                const about = res.data;
+                const [resAbout, resTeam, resContact] = await Promise.all([
+                    fetchFromStrapi('/api/about?populate=Logo&populate=why_uses&populate=misis'),
+                    fetchFromStrapi('/api/our-teams?populate=Profile'),
+                    fetchFromStrapi('/api/contact'),
+                ]);
 
-                if (!res || !res.data || Object.keys(res.data).length === 0) {
+                if (!resAbout || !resAbout.data || Object.keys(resAbout.data).length === 0) {
                     throw new Error('Data "about" tidak ditemukan atau kosong.');
                 }
-                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-                setAboutItem(about);
 
+                setContact(resContact.data);
+                setAboutItem(resAbout.data);
+                setOurTeams(resTeam.data);
             } catch (err: any) {
                 setError(err.message || 'Terjadi kesalahan saat mengambil data.');
             } finally {
@@ -78,7 +95,9 @@ export default function About() {
         };
 
         fetchData();
-    }, []);
+        }, []);
+
+        
 
     if (loading) {
         return <Loader />;
@@ -171,7 +190,7 @@ export default function About() {
                                 <Text size="sm" c="dimmed">Didirikan</Text>
                             </Flex>
                             <Box
-                                w="50%"
+                                w="30%"
                                 h={4}
                                 bg="#007BFF"
                                 style={{ borderRadius: "100px" }}
@@ -192,7 +211,7 @@ export default function About() {
                                 direction="row"
                                 gap="md"
                             >
-                                <DynamicsIcon iconName="IconWorldStar"/>
+                                <DynamicsIcon iconName="IconWorldStar" style={{ color: '#007BFF' }}/>
                                 <Text size="sm">Menjadi mitra berbagai institusi & bisnis nasional</Text>
                             </Flex>
                         </div>
@@ -200,15 +219,171 @@ export default function About() {
                 </Flex>
             </Container>
 
-            {/* <div className="mt-8">
-                <Title order={4}>Misi Kami</Title>
-                {aboutItem.misis.map((misi) => (
-                    <div key={misi.id}>
-                        <DynamicsIcon iconName={misi.Icon as any} />
-                        <Text>{misi.Description}</Text>
-                    </div>
+            <Container size="lg" className='flex flex-col md:flex-row gap-6'>
+                <Flex
+                    justify="center"
+                    align="flex-start"
+                    direction="column"
+                    className="p-6 myCard rounded-xl md:w-1/2"
+                >
+                    <Flex
+                        direction="row"
+                        justify="center"
+                        gap='sm'
+                        align="center"
+                    >
+                        <DynamicsIcon iconName='IconEye' style={{ color: '#007BFF' }}/>
+                        <Title order={3} my="sm" c="#007BFF">Visi</Title>
+                    </Flex>
+                    <Text size="md">{aboutItem.visi}</Text>
+                </Flex>
+                <Flex
+                    justify="center"
+                    align="flex-start"
+                    direction="column"
+                    className="p-6 myCard rounded-xl md:w-1/2"
+                >
+                    <Flex
+                        direction="row"
+                        justify="center"
+                        gap='sm'
+                        align="center"
+                    >
+                        <DynamicsIcon iconName='IconTarget' style={{ color: '#007BFF' }}/>
+                        <Title order={3} my="sm" c="#007BFF">Misi</Title>
+                    </Flex>
+                    {aboutItem.misis.map((misi) => (
+                        <Flex 
+                            key={misi.id} 
+                            direction='row'
+                            gap='sm'
+                            my={5}
+                        >
+                            <DynamicsIcon iconName={misi.Icon as any} style={{ color: '#007BFF', width: '30px' }}/>
+                            <Text size="md">{misi.Description}</Text>
+                        </Flex>
+                    ))}
+                </Flex>
+            </Container>
+
+            <Container size="lg">
+                <Center>
+                    <Title order={1} my="sm" c="#007BFF">Kenapa memilih kami?</Title>
+                </Center>
+                <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="xs" >
+                {aboutItem.why_uses.map((why) => (
+                    <Flex
+                    key={why.id}
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    gap="xs"
+                    my={5}
+                    className="p-6 myCard rounded-xl"
+                    >
+                    <DynamicsIcon
+                        iconName={why.Icon as any}
+                        style={{ color: '#007BFF', width: '30px', height: '30px' }}
+                    />
+                    <Text size="md" ta="center">{why.Description}</Text>
+                    </Flex>
                 ))}
-            </div> */}
+                </SimpleGrid>
+            </Container>
+
+            <Container size="lg">
+                <Center>
+                    <Title order={1} my="sm" c="#007BFF">Tim Kami</Title>
+                </Center>
+                <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="xs">
+                {ourTeams.map((teams) => {
+                    const imageUrl =
+                        teams.Profile?.formats?.thumbnail?.url ||
+                        teams.Profile?.url ||
+                        '';
+                        return (
+                    <Flex
+                    key={teams.id}
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    gap="xs"
+                    my={5}
+                    className="p-6 myCard rounded-xl"
+                    >
+                        <Avatar
+                            radius="xl"
+                            size="lg"
+                            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${imageUrl}`}
+                            alt={teams.Name}
+                        />
+                        <Text size="md" ta="center">{teams.Name}</Text>
+                        <Text size="md" ta="center" c="#007BFF">{teams.Jobdesk}</Text>
+                        <Text size="md" ta="center">{teams.Motto}</Text>
+                    </Flex>
+                )})}
+                </SimpleGrid>
+            </Container>
+
+            <Container size="lg" pb={24}>
+                <Center>
+                    <Title order={1} my="sm" c="#007BFF">Andita dalam Angka</Title>
+                </Center>
+                <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xs" >
+                    <Flex
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    gap="xs"
+                    my={5}
+                    className="p-6 myCard rounded-xl"
+                    >
+                        <DynamicsIcon iconName="IconChecklist" style={{ color: '#007BFF', width: '50px', height: '50px' }}/>
+                        <Title order={1} ta="center" c="#007BFF">{aboutItem.TotalProyek}+</Title>
+                        <Text c="dimmed">Proyek selesai</Text>
+                    </Flex>
+                    <Flex
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    gap="xs"
+                    my={5}
+                    className="p-6 myCard rounded-xl"
+                    >
+                        <DynamicsIcon iconName="IconMapPinFilled" style={{ color: '#007BFF', width: '50px', height: '50px' }}/>
+                        <Title order={1} ta="center" c="#007BFF">{aboutItem.Jangkauan}+</Title>
+                        <Text c="dimmed">Proyek selesai</Text>
+                    </Flex>
+                    <Flex
+                    direction="column"
+                    justify="center"
+                    align="center"
+                    gap="xs"
+                    my={5}
+                    className="p-6 myCard rounded-xl"
+                    >
+                        <DynamicsIcon iconName="IconStarFilled" style={{ color: '#007BFF', width: '50px', height: '50px' }}/>
+                        <Title order={1} ta="center" c="#007BFF">{aboutItem.Kepuasan}%</Title>
+                        <Text c="dimmed">Proyek selesai</Text>
+                    </Flex>
+                </SimpleGrid>
+            </Container>
+
+            <Container fluid bg="#007BFF">
+                <Container size="lg">
+                    <Flex 
+                        justify="center"
+                        align="center"
+                        direction="column"
+                        className="py-24"
+                        gap="md"
+                    >
+                        <Title c="#fff" ta="center">Siap membangun bersama kami?</Title>
+                        <Text c="#fff" ta="center">Hubungi tim kami dan rasakan perbedaan layanan profesional serta kualitas koneksi terbaik di Indonesia.</Text>
+                        <Button variant="white" size="xl" radius="xl" color="#007BFF" component={Link} href={`tel:+62${contact.Phone}`}>Hubungi Kami</Button>
+                    </Flex>
+                </Container>
+            </Container>
 
             <Footer />
             <WhatsappButton />

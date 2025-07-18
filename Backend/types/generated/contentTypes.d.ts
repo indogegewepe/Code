@@ -405,6 +405,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    visi: Schema.Attribute.String;
     why_uses: Schema.Attribute.Relation<'oneToMany', 'api::why-us.why-us'>;
   };
 }
