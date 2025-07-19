@@ -401,5 +401,13 @@ export default function Globe() {
     },
   ];
 
-  return <World data={sampleArcs} globeConfig={globeConfig} />;
+  return (
+    <div className="flex flex-row items-center justify-center h-screen md:h-auto relative w-full">
+      <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[50rem]">
+        <div className="absolute w-full md:-bottom-20 -bottom-50 h-150 md:h-full z-10">
+          <World data={sampleArcs} globeConfig={globeConfig} />
+        </div>
+      </div>
+    </div>
+  );
 }
