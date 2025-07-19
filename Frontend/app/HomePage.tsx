@@ -7,31 +7,16 @@ import { Button, Container } from '@mantine/core';
 import { fetchFromStrapi } from '../lib/api';
 import React, { useEffect, useState } from 'react';
 
-const Globe = dynamic(() => import('./components/Globe/Globe'));
+import GridServices from './components/GridServices/grid-services'
+import Globe from './components/Globe/Globe';
+
 const Header = dynamic(() => import('./components/Header/Header'));
 const Footer = dynamic(() => import('./components/Footer/Footer'));
-const WhatsappButton = dynamic(() => import('./components/Whatsapp/whatsapp'), {
-  ssr: false,
-  loading: () => null,
-});
-
-const ContactUs = dynamic(() => import('./components/Contact/ContactUs'), {
-  ssr: false,
-  loading: () => null,
-});
-const Faq = dynamic(() => import('./components/FAQ/faq'), { ssr: false, loading: () => null });
-const Partners = dynamic(() => import('./components/Partners/Partners'), {
-  ssr: false,
-  loading: () => null,
-});
-const GridServices = dynamic(() => import('./components/GridServices/grid-services'), {
-  ssr: false,
-  loading: () => null,
-});
-const Project = dynamic(() => import('./components/OurProject/project'), {
-  ssr: false,
-  loading: () => null,
-});
+const WhatsappButton = dynamic(() => import('./components/Whatsapp/whatsapp'), { ssr: false, });
+const ContactUs = dynamic(() => import('./components/Contact/ContactUs'), { ssr: false, });
+const Faq = dynamic(() => import('./components/FAQ/faq'), { ssr: false });
+const Partners = dynamic(() => import('./components/Partners/Partners'), { ssr: false, });
+const Project = dynamic(() => import('./components/OurProject/project'), { ssr: false, });
 
 export default function HomePage() {
   const [gridRef, gridInView] = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -39,7 +24,6 @@ export default function HomePage() {
   const [partnersRef, partnersInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [faqRef, faqInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [contactRef, contactInView] = useInView({ triggerOnce: true, threshold: 0.2 });
-
   const [hero, setHero] = useState({ Title: '', Description: '' });
 
   useEffect(() => {
