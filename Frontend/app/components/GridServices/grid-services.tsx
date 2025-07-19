@@ -30,7 +30,7 @@ export default function GridServices() {
   }, []);
 
   return (
-    <Container fluid bg="#171717" className="rounded-md">
+    <Container fluid bg="#171717" className="rounded-md z-20">
       <Container size="lg" className="heroContainerSec">
         <div id="services" className="heroContentSec py-24 scroll-mt-6">
           <Title className="text-center">Our Services</Title>
