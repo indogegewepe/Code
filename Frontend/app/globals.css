@@ -57,12 +57,11 @@ body {
 
 .heroGlobe {
     position: absolute;
-    width: -webkit-fill-available;
+    width: 100%;
     z-index: -1;
-    top: 0;
-    transform: translateX(430px) translateY(-50px);
+    transform: translate(25em)translateY(-45em);
     @media screen and (max-width: 768px) {
-        transform: translate(0px, 100px);
+        transform: translateY(-18em);
 }
 }
 

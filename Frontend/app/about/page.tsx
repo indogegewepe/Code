@@ -264,7 +264,7 @@ export default function About() {
 
             <Container size="lg">
                 <Center>
-                    <Title order={1} my="sm" c="#007BFF">Kenapa memilih kami?</Title>
+                    <Title order={1} my="sm" c="#007BFF" ta="center">Kenapa memilih kami?</Title>
                 </Center>
                 <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="xs" >
                 {aboutItem.why_uses.map((why) => (
@@ -323,7 +323,7 @@ export default function About() {
 
             <Container size="lg" pb={24}>
                 <Center>
-                    <Title order={1} my="sm" c="#007BFF">Andita dalam Angka</Title>
+                    <Title order={1} my="sm" c="#007BFF" ta="center">Andita dalam Angka</Title>
                 </Center>
                 <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xs" >
                     <Flex
