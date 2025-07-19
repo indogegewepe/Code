@@ -7,6 +7,7 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import { fetchFromStrapi } from '@/lib/api';
 import { Loader } from './loader';
 import ArticlesContent from './content';
+import * as motion from "motion/react-client"
 
 const Header = dynamic(() => import('@/app/components/NavProject/Header'));
 const Footer = dynamic(() => import('@/app/components/NavProject/Footer'));
@@ -121,30 +122,40 @@ export default function ProyekPage() {
       </nav>
 
       <Container size="lg" className='pt-20'>
-        {proyekItems.map((proyek) => (
-          <Card shadow="sm"
+        {proyekItems.map((proyek) => {
+
+        return (
+          <motion.div
+            key={proyek.id}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.4,
+              scale: { type: "spring", bounce: 0.5 },
+            }}
+          >
+            <Card
+              shadow="sm"
               radius="md"
-              withBorder 
+              withBorder
               style={{
                 backgroundImage: `url(${proyek.image.url})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 backgroundBlendMode: 'darken',
-                backgroundColor: 'light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6))',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
               }}
               className="rounded-md p-6 text-white flex flex-col items-center justify-center gap-6 bg-no-repeat w-full shadow-md"
-              key={proyek.id} 
-              >
-            <div
-              className="rounded-md p-6 text-white flex flex-col items-center gap-6"
             >
+              <div className="rounded-md p-6 text-white flex flex-col items-center gap-6">
                 <Title order={1}>{proyek.title}</Title>
                 <Text lineClamp={3}>{proyek.description}</Text>
-            </div>
-        </Card>
-        ))
-        }
+              </div>
+            </Card>
+          </motion.div>
+        );
+      })}
 
         <ArticlesContent />
       </Container>
