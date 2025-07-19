@@ -108,6 +108,7 @@ body {
     place-items: center;
     overflow: hidden;
     height: 100%;
+    z-index: 20;
     @media screen and (max-width:  768px) {
         align-items: flex-start;
     }
