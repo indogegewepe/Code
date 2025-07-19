@@ -403,7 +403,7 @@ export default function Globe() {
 
   return (
     <div className="flex items-center">
-      <div className="mx-auto w-full overflow-hidden h-full md:h-[50rem]">
+      <div className="mx-auto w-full overflow-hidden h-full md:h-[60rem]">
         <div className="w-full md:-bottom-20 -bottom-50 h-150 md:h-full z-10">
           <World data={sampleArcs} globeConfig={globeConfig} />
         </div>

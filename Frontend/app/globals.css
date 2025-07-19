@@ -7,8 +7,7 @@ body {
 
 .heroContainer{
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     position: relative;
     overflow: hidden;
     height: 100vh;
@@ -130,7 +129,7 @@ body {
     text-align: center;
     font-size: 2.5rem;
     font-weight: 500;
-    padding: 1.5rem 0;
+    padding-top: 1.5rem;
     color: light-dark(#000000, #ffffff);
 }
 
