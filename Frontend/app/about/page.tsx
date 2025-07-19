@@ -348,7 +348,7 @@ export default function About() {
                     >
                         <DynamicsIcon iconName="IconMapPinFilled" style={{ color: '#007BFF', width: '50px', height: '50px' }}/>
                         <Title order={1} ta="center" c="#007BFF">{aboutItem.Jangkauan}+</Title>
-                        <Text c="dimmed">Proyek selesai</Text>
+                        <Text c="dimmed">Kota Dijangkau</Text>
                     </Flex>
                     <Flex
                     direction="column"
@@ -360,7 +360,7 @@ export default function About() {
                     >
                         <DynamicsIcon iconName="IconStarFilled" style={{ color: '#007BFF', width: '50px', height: '50px' }}/>
                         <Title order={1} ta="center" c="#007BFF">{aboutItem.Kepuasan}%</Title>
-                        <Text c="dimmed">Proyek selesai</Text>
+                        <Text c="dimmed">Tingkat Kepuasan</Text>
                     </Flex>
                 </SimpleGrid>
             </Container>
