@@ -7,7 +7,7 @@ import { Button, Container } from '@mantine/core';
 import { fetchFromStrapi } from '../lib/api';
 import React, { useEffect, useState } from 'react';
 
-const Globe = dynamic(() => import('./components/Globe/Globe'));
+import Globe from './components/Globe/Globe';
 const Header = dynamic(() => import('./components/Header/Header'));
 const Footer = dynamic(() => import('./components/Footer/Footer'));
 const WhatsappButton = dynamic(() => import('./components/Whatsapp/whatsapp'), {

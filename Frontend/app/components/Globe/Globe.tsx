@@ -10,8 +10,6 @@ const World = dynamic(() => import('../ui/Globe').then((m) => m.World), {
 });
 
 export default function Globe() {
-  // Tailwind CSS is for styling HTML elements, not JS config objects.
-  // To use Tailwind, wrap the <World /> component in a styled div:
   const globeConfig = useMemo(
     () => ({
       pointSize: 4,
@@ -401,5 +399,13 @@ export default function Globe() {
     },
   ];
 
-  return <World data={sampleArcs} globeConfig={globeConfig} />;
+  return (
+    <div className="flex flex-row items-center justify-center h-screen md:h-auto relative w-full">
+      <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem]">
+        <div className="absolute w-full md:-bottom-20 -bottom-50 h-150 md:h-full z-10">
+          <World data={sampleArcs} globeConfig={globeConfig} />
+        </div>
+      </div>
+    </div>
+  );
 }
