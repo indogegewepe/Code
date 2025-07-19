@@ -8,7 +8,6 @@ import { fetchFromStrapi } from '../lib/api';
 import React, { useEffect, useState } from 'react';
 
 import GridServices from './components/GridServices/grid-services'
-import Globe from './components/Globe/Globe';
 
 const Header = dynamic(() => import('./components/Header/Header'));
 const Footer = dynamic(() => import('./components/Footer/Footer'));
@@ -17,6 +16,7 @@ const ContactUs = dynamic(() => import('./components/Contact/ContactUs'), { ssr:
 const Faq = dynamic(() => import('./components/FAQ/faq'), { ssr: false });
 const Partners = dynamic(() => import('./components/Partners/Partners'), { ssr: false, });
 const Project = dynamic(() => import('./components/OurProject/project'), { ssr: false, });
+const Globe = dynamic(() => import('./components/Globe/Globe'), { ssr: false, });
 
 export default function HomePage() {
   const [gridRef, gridInView] = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -25,6 +25,7 @@ export default function HomePage() {
   const [faqRef, faqInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [contactRef, contactInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [hero, setHero] = useState({ Title: '', Description: '' });
+  const [showGlobe, setShowGlobe] = useState(false);
 
   useEffect(() => {
     fetchFromStrapi('/api/hero')
@@ -35,6 +36,12 @@ export default function HomePage() {
         });
       })
   }, []);
+
+  useEffect(() => {
+    if (gridInView && projectInView && partnersInView && faqInView && contactInView) {
+      setShowGlobe(true);
+    }
+  }, [gridInView, projectInView, partnersInView, faqInView, contactInView]);
 
   return (
     <>
@@ -65,7 +72,7 @@ export default function HomePage() {
       </Container>
 
       <div className="heroGlobe">
-        <Globe />
+        {showGlobe && <Globe />}
       </div>
 
       <div id="services" ref={gridRef}>
