@@ -22,15 +22,15 @@ export default function GridServices() {
         const res = await fetchFromStrapi('/api/services');
         setServiceItems(res.data);
       } catch (error) {
-        console.error('Failed to fetch services:', error);
-      }
+        console.error('Failed to fetch services :', error);
+      } 
     };
 
     fetchService();
   }, []);
 
   return (
-    <Container fluid bg="#171717" className="rounded-md z-20 absolute">
+    <Container fluid bg="#171717" className="rounded-md z-20 relative">
       <Container size="lg" className="heroContainerSec">
         <div id="services" className="heroContentSec py-24 scroll-mt-6">
           <Title className="text-center">Our Services</Title>
