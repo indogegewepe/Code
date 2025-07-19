@@ -57,6 +57,7 @@ body {
 
 .heroGlobe {
     position: absolute;
+    width: -webkit-fill-available;
     z-index: -1;
     top: 0;
     transform: translateX(430px) translateY(-50px);
